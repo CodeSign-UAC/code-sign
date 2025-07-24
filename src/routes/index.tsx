@@ -1,39 +1,31 @@
 import { createFileRoute } from '@tanstack/react-router'
-import logo from '../logo.svg'
+import { Auth } from '@supabase/auth-ui-react'
+import { ThemeSupa } from '@supabase/auth-ui-shared'
+import { supabase } from '../supabaseClient'
+import { useSession } from '../hooks/useSession'
 
 export const Route = createFileRoute('/')({
   component: App,
 })
 
 function App() {
-  return (
-    <div className="text-center">
-      <header className="min-h-screen flex flex-col items-center justify-center bg-[#282c34] text-white text-[calc(10px+2vmin)]">
-        <img
-          src={logo}
-          className="h-[40vmin] pointer-events-none animate-[spin_20s_linear_infinite]"
-          alt="logo"
-        />
-        <p>
-          Edit <code>src/routes/index.tsx</code> and save to reload.
-        </p>
-        <a
-          className="text-[#61dafb] hover:underline"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        <a
-          className="text-[#61dafb] hover:underline"
-          href="https://tanstack.com"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn TanStack
-        </a>
-      </header>
-    </div>
-  )
+  const { session, loading } = useSession()
+
+  if (loading) {
+    return <div></div>
+  } else if (!session) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="w-xl px-4">
+          <Auth
+            supabaseClient={supabase}
+            appearance={{ theme: ThemeSupa }}
+            providers={['google']}
+          />
+        </div>
+      </div>
+    )
+  } else {
+    return <div>Logged in!</div>
+  }
 }

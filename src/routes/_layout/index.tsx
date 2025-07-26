@@ -1,17 +1,15 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { Braces, KeyRound, Mail } from 'lucide-react';
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { Braces, KeyRound, Mail, Router } from 'lucide-react';
 import * as z from "zod";
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Auth } from '@supabase/auth-ui-react'
-import { ThemeSupa } from '@supabase/auth-ui-shared'
-import { supabase } from '../supabaseClient'
-import { useSession } from '../hooks/useSession'
 import type { JSX } from 'react'
+import { supabase } from '@/lib/supabaseClient';
+import { useSession } from '@/core/hooks/useSession';
 
-export const Route = createFileRoute('/')({
-  component: App,
+export const Route = createFileRoute('/_layout/')({
+  component: LoginPage,
 })
 
 const scheme = z.object({
@@ -19,8 +17,9 @@ const scheme = z.object({
   password: z.string().min(4, 'La contraseña debe tener al menos 4 caracteres')
 })
 
-function App(): JSX.Element {
+function LoginPage(): JSX.Element {
   const { session, loading } = useSession()
+  const navigate = useNavigate({ from: Route.id })
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm({
     resolver: zodResolver(scheme),
@@ -34,7 +33,7 @@ function App(): JSX.Element {
     if (error)
       console.error('Error al iniciar sesión:', error.message)
     else
-      console.log('Inicio de sesión exitoso')
+      navigate({ to: '/app/home' })
   }
 
   return (

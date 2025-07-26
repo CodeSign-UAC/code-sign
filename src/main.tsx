@@ -7,6 +7,7 @@ import * as TanStackQueryProvider from './integrations/tanstack-query/root-provi
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'
 import './styles.css'
+import { SidebarProvider } from './core/providers/index.ts'
 // import reportWebVitals from './reportWebVitals.ts'
 
 // Create a new router instance
@@ -33,15 +34,10 @@ if (rootElement && !rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <TanStackQueryProvider.Provider>
-        <main className='container min-h-screen mx-auto px-4'>
+        <SidebarProvider>
           <RouterProvider router={router} />
-        </main>
+        </SidebarProvider>
       </TanStackQueryProvider.Provider>
     </StrictMode>,
   )
 }
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-// reportWebVitals()

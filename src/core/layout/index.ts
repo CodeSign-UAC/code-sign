@@ -1,7 +1,7 @@
-import Sidebar from './sidebar'
+import AppSidebar from './app-sidebar'
 import Header from './header'
 
 export {
-  Sidebar,
+  AppSidebar,
   Header
 }

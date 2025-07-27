@@ -2,6 +2,8 @@ import { PanelLeftClose } from "lucide-react"
 import { useSidebar } from "../providers"
 import { useLocation } from "@tanstack/react-router"
 import { useEffect, type JSX } from "react"
+import { SidebarTrigger } from "@/components/ui/sidebar"
+import { Separator } from "@/components/ui/separator"
 
 export default function Header(): JSX.Element {
   const { isSidebarOpen, onToggleSidebar } = useSidebar()
@@ -19,20 +21,13 @@ export default function Header(): JSX.Element {
   }
 
   return (
-    <header className="navbar bg-base-100 shadow-sm">
-      <div className="navbar-start">
-        <div className="flex items-center">
-          <button className="btn btn-ghost" onClick={(): void => onToggleSidebar(!isSidebarOpen)}>
-            <PanelLeftClose size={20} />
-          </button>
-          {/* <div className="border-l-2 border-base-content h-2"></div> */}
-          <h2 className="text-xl font-bold leading-tight">{routeTitle[location.pathname]}</h2>
-        </div>
+    <header className="flex h-16 items-center gap-2 border-b px-4">
+      <SidebarTrigger className="-ml-1 cursor-pointer" />
+      <div className="h-full py-4">
+        <Separator orientation="vertical" className="h-4 mr-2" />
       </div>
-
-      <div className="navbar-end">
-        <div className="dropdown dropdown-end">
-        </div>
+      <div className="flex items-center">
+        <h2 className="text-xl font-bold leading-tight">{routeTitle[location.pathname]}</h2>
       </div>
     </header>
   )

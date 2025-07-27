@@ -67,7 +67,7 @@ function LoginPage(): JSX.Element {
               <div className="space-y-2">
                 <Label htmlFor='email'>Correo institucional</Label>
                 <div className='relative'>
-                  <Mail className='absolute left-3 top-3 h-4 w-4 text-gray-400' />
+                  <Mail className='absolute left-3 top-3 h-4 w-4 text-muted-foreground' />
                   <Input
                     id='email'
                     type="email"
@@ -90,7 +90,7 @@ function LoginPage(): JSX.Element {
               <div className='space-y-2'>
                 <Label htmlFor='password'>Contraseña</Label>
                 <div className='relative'>
-                  <KeyRound className='absolute left-3 top-3 h-4 w-4 text-gray-400' />
+                  <KeyRound className='absolute left-3 top-3 h-4 w-4 text-muted-foreground' />
                   <Input
                     id='password'
                     type="password"

@@ -4,6 +4,7 @@ import { useLocation } from "@tanstack/react-router"
 import { useEffect, type JSX } from "react"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { Separator } from "@/components/ui/separator"
+import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
 
 export default function Header(): JSX.Element {
   const { isSidebarOpen, onToggleSidebar } = useSidebar()
@@ -26,9 +27,20 @@ export default function Header(): JSX.Element {
       <div className="h-full py-4">
         <Separator orientation="vertical" className="h-4 mr-2" />
       </div>
-      <div className="flex items-center">
-        <h2 className="text-xl font-bold leading-tight">{routeTitle[location.pathname]}</h2>
-      </div>
+
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem className="hidden lg:block">
+            Portal de estudiante
+          </BreadcrumbItem>
+          <BreadcrumbSeparator className="hidden lg:block" />
+          <BreadcrumbItem>
+            <BreadcrumbPage className="text-md font-semibold">
+              {routeTitle[location.pathname]}
+            </BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
     </header>
   )
 }

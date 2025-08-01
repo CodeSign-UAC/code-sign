@@ -1,16 +1,28 @@
+import { Binoculars, FileTextIcon } from 'lucide-react'
+
 export enum ResourceStatus {
-  Available = "disponible",
-  DueSoon = "próximo a vencer",
-  Completed = "completado"
+  Available = 'disponible',
+  DueSoon = 'próximo a vencer',
+  Completed = 'completado',
+}
+
+export enum ResourceCategory {
+  Document = 'Document',
+  Tutorial = 'Tutorial',
+}
+
+export const ResourceCategoryIcon = {
+  [ResourceCategory.Document]: FileTextIcon,
+  [ResourceCategory.Tutorial]: Binoculars,
 }
 
 export interface Resource {
   id: number
   title: string
-  type: string
-  duration?: string
-  category: string
-  status: ResourceStatus
   description: string
+  file_url?: string
+  duration?: string
+  category: ResourceCategory
+  created_at?: string
+  is_accesible: boolean
 }
-// Averigüen si haremos asignaciones o tareas

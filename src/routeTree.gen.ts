@@ -14,6 +14,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as AppLayoutRouteImport } from './routes/app/_layout'
+import { Route as AppLayoutResourcesRouteImport } from './routes/app/_layout/resources'
 import { Route as AppLayoutHomeRouteImport } from './routes/app/_layout/home'
 
 const AppRouteImport = createFileRoute('/app')()
@@ -36,6 +37,11 @@ const AppLayoutRoute = AppLayoutRouteImport.update({
   id: '/_layout',
   getParentRoute: () => AppRoute,
 } as any)
+const AppLayoutResourcesRoute = AppLayoutResourcesRouteImport.update({
+  id: '/resources',
+  path: '/resources',
+  getParentRoute: () => AppLayoutRoute,
+} as any)
 const AppLayoutHomeRoute = AppLayoutHomeRouteImport.update({
   id: '/home',
   path: '/home',
@@ -46,11 +52,13 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppLayoutRouteWithChildren
   '/': typeof LayoutIndexRoute
   '/app/home': typeof AppLayoutHomeRoute
+  '/app/resources': typeof AppLayoutResourcesRoute
 }
 export interface FileRoutesByTo {
   '/app': typeof AppLayoutRouteWithChildren
   '/': typeof LayoutIndexRoute
   '/app/home': typeof AppLayoutHomeRoute
+  '/app/resources': typeof AppLayoutResourcesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -59,12 +67,13 @@ export interface FileRoutesById {
   '/app/_layout': typeof AppLayoutRouteWithChildren
   '/_layout/': typeof LayoutIndexRoute
   '/app/_layout/home': typeof AppLayoutHomeRoute
+  '/app/_layout/resources': typeof AppLayoutResourcesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/app' | '/' | '/app/home'
+  fullPaths: '/app' | '/' | '/app/home' | '/app/resources'
   fileRoutesByTo: FileRoutesByTo
-  to: '/app' | '/' | '/app/home'
+  to: '/app' | '/' | '/app/home' | '/app/resources'
   id:
     | '__root__'
     | '/_layout'
@@ -72,6 +81,7 @@ export interface FileRouteTypes {
     | '/app/_layout'
     | '/_layout/'
     | '/app/_layout/home'
+    | '/app/_layout/resources'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -109,6 +119,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppLayoutRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/_layout/resources': {
+      id: '/app/_layout/resources'
+      path: '/resources'
+      fullPath: '/app/resources'
+      preLoaderRoute: typeof AppLayoutResourcesRouteImport
+      parentRoute: typeof AppLayoutRoute
+    }
     '/app/_layout/home': {
       id: '/app/_layout/home'
       path: '/home'
@@ -132,10 +149,12 @@ const LayoutRouteWithChildren =
 
 interface AppLayoutRouteChildren {
   AppLayoutHomeRoute: typeof AppLayoutHomeRoute
+  AppLayoutResourcesRoute: typeof AppLayoutResourcesRoute
 }
 
 const AppLayoutRouteChildren: AppLayoutRouteChildren = {
   AppLayoutHomeRoute: AppLayoutHomeRoute,
+  AppLayoutResourcesRoute: AppLayoutResourcesRoute,
 }
 
 const AppLayoutRouteWithChildren = AppLayoutRoute._addFileChildren(

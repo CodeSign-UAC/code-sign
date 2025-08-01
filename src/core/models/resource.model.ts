@@ -11,6 +11,11 @@ export enum ResourceCategory {
   Tutorial = 'Tutorial',
 }
 
+export const ResourceLabel = {
+  [ResourceCategory.Document]: 'Documento',
+  [ResourceCategory.Tutorial]: 'Tutorial',
+}
+
 export const ResourceCategoryIcon = {
   [ResourceCategory.Document]: FileTextIcon,
   [ResourceCategory.Tutorial]: Binoculars,

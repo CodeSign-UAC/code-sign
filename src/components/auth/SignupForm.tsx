@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { KeyRound, Mail } from 'lucide-react'
+import { KeyRound, Mail, User } from 'lucide-react'
 
 import type { JSX } from 'react'
 import type { SignupForm as SignupFormType } from '@/lib/schemas/auth'
@@ -30,27 +30,42 @@ export function SignupForm({
     formState: { errors },
   } = useForm<SignupFormType>({
     resolver: zodResolver(signupSchema),
-    defaultValues: { email: '', password: '', confirmPassword: '' },
+    defaultValues: {
+      username: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+    },
     mode: 'onChange',
   })
 
   const onSubmit = async ({
+    username,
     email,
     password,
   }: SignupFormType): Promise<void> => {
     setIsLoading(true)
-    const { error } = await supabase.auth.signUp({
+
+    // Create the account
+    const { error: signUpError } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: {
+          username,
+        },
+      },
     })
+
     setIsLoading(false)
 
-    if (error) {
-      const errorMessage = 'Error al crear cuenta: ' + error.message
+    if (signUpError) {
+      const errorMessage = 'Error al crear cuenta: ' + signUpError.message
       console.error(errorMessage)
       onError?.(errorMessage)
     } else {
-      onSuccess()
+      // Redirect to root with success message
+      window.location.href = '/?message=signup-success'
     }
   }
 
@@ -60,6 +75,27 @@ export function SignupForm({
       className="space-y-4"
       data-testid="signup-form"
     >
+      <div className="space-y-2">
+        <Label htmlFor="signup-username">Nombre de usuario</Label>
+        <div className="relative">
+          <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+          <Input
+            id="signup-username"
+            type="text"
+            placeholder="Ingrese su nombre de usuario"
+            className={`${watch('username').length > 0 && 'validator'} pl-10`}
+            {...register('username')}
+            data-testid="signup-username-input"
+          />
+        </div>
+      </div>
+      {errors.username && (
+        <Alert variant="destructive" data-testid="signup-username-error">
+          <User />
+          <AlertDescription>{errors.username.message}</AlertDescription>
+        </Alert>
+      )}
+
       <div className="space-y-2">
         <Label htmlFor="signup-email">Correo institucional</Label>
         <div className="relative">

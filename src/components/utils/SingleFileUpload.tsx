@@ -1,12 +1,15 @@
 import { useState } from 'react'
 import { UploadCloudIcon } from 'lucide-react'
 import { supabase } from '@/lib/supabaseClient'
+import { Value } from '@radix-ui/react-select'
 
 interface Props {
   name: string
+  value?: string
+  onChange?: (newUrl: string) => void
 }
 
-export function SingleFileUpload({ name }: Props) {
+export function SingleFileUpload({ name, value, onChange }: Props) {
   const [fileName, setFileName] = useState('')
   const [uploading, setUploading] = useState(false)
   const [currentPublicUrl, setPublicUrl] = useState('')
@@ -32,11 +35,17 @@ export function SingleFileUpload({ name }: Props) {
       return
     }
 
-    const {
-      data: { publicUrl },
-    } = supabase.storage.from('tu-bucket').getPublicUrl(filePath)
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from('tu-bucket').getPublicUrl(filePath)
 
-    setPublicUrl(publicUrl)
+      setPublicUrl(publicUrl) 
+
+      if (onChange) {
+        onChange(publicUrl)
+      }
+
+
     setUploading(false)
   }
 
@@ -61,19 +70,19 @@ export function SingleFileUpload({ name }: Props) {
         </div>
       )}
 
-      {currentPublicUrl && (
+      {value && (
         <>
           <p className="mt-4 text-green-600">¡Archivo subido con éxito!</p>
-          <input type="hidden" name="archivo_url" value={currentPublicUrl} />
+          <input type="hidden" name="file_url" value={value} />
           <p className="text-sm break-all text-gray-600 mt-1">
             URL:{' '}
             <a
-              href={currentPublicUrl}
+              href={value}
               target="_blank"
               rel="noopener noreferrer"
               className="underline text-blue-600"
             >
-              {currentPublicUrl}
+              {value}
             </a>
           </p>
         </>

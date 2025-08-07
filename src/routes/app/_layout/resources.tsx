@@ -20,6 +20,15 @@ function ResourcePage(): JSX.Element {
   const [resources, setResources] = useState<Array<Resource>>([])
   const [open, setOpen] = useState(false)
 
+  const [editingResource, setEditingResource] = useState<Resource | null>(null)
+  // Estado para controlar el formulario
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    category: '',
+    file_url: '',
+  })
+
   async function fetchResources() {
     const { data, error } = await supabase.from('resource').select('*')
     if (error) {
@@ -30,9 +39,36 @@ function ResourcePage(): JSX.Element {
     console.log('Resources fetched:', data)
   }
 
+      const handleDelete = async (id: number) => {
+      const confirmed = window.confirm('¿Estás seguro de eliminar este recurso?')
+      if (!confirmed) return
+
+      const { error } = await supabase.from('resource').delete().eq('id', id)
+      if (error) {
+        console.error('Error eliminando recurso:', error)
+        alert('Error al eliminar recurso')
+        return
+      }
+
+      await fetchResources()
+    }
+
+
   useEffect(() => {
     fetchResources()
   }, [])
+
+  // Al abrir para editar, cargar datos en el formulario controlado
+  const startEditing = (resource: Resource) => {
+    setEditingResource(resource)
+    setFormData({
+      title: resource.title,
+      description: resource.description,
+      category: resource.category,
+      file_url: resource.file_url || '',
+    })
+    setOpen(true)
+  }
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -49,6 +85,25 @@ function ResourcePage(): JSX.Element {
       return
     }
 
+    if (editingResource) {
+    // Actualizar recurso existente
+    const { error } = await supabase
+      .from('resource')
+      .update({
+        title,
+        description,
+        category,
+        file_url: fileUrl,
+      })
+      .eq('id', editingResource.id)
+
+    if (error) {
+      console.error('Error actualizando recurso:', error)
+      alert('Error al modificar el recurso')
+      return
+    }
+  } else {
+
     const { error } = await supabase.from('resource').insert({
       title,
       description,
@@ -62,23 +117,42 @@ function ResourcePage(): JSX.Element {
       alert('Error al crear el recurso')
       return
     }
+  }
 
-    fetchResources()
+    await fetchResources()
+    setEditingResource(null)
+    setFormData({ title: '', description: '', category: '', file_url: '' })
     setOpen(false)
+
   }
 
   return (
     <>
       <div className="space-y-4">
         <div className="flex justify-end">
-          <Button onClick={() => setOpen(true)} variant="outline">
+          <Button onClick={() => {
+              setEditingResource(null)
+              setFormData({ title: '', description: '', category: '', file_url: '' })
+              setOpen(true)
+            }} variant="outline">
             <PlusIcon className="mr-2" />
             Nuevo Recurso
           </Button>
         </div>
         <div className="flex flex-col gap-4">
           {resources.map((resource) => (
-            <ResourceCard key={resource.id} resource={resource} />
+            <ResourceCard
+              key={resource.id}
+              resource={resource}
+              onEdit={() => {
+                console.log('Editar recurso:', resource.id)
+                startEditing(resource)
+              }}
+              onDelete={() => {
+                console.log('Eliminar recurso:', resource.id)
+                handleDelete(resource.id)
+              }}
+            />
           ))}
         </div>
       </div>
@@ -92,18 +166,23 @@ function ResourcePage(): JSX.Element {
               <div className="flex flex-col gap-6 flex-1 overflow-y-auto">
                 <Input
                   name="title"
-                  type="text  "
+                  type="text"
                   placeholder="Titulo del recurso"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 />
                 <TextArea
                   name="description"
                   placeholder="Descripción del recurso"
-                  className="min-h-24 "
+                  className="min-h-24"
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 />
                 <select
                   name="category"
                   className="p-2 border rounded"
-                  defaultValue=""
+                  value={formData.category}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                 >
                   <option value="" disabled>
                     Seleccione el tipo de recurso
@@ -114,7 +193,9 @@ function ResourcePage(): JSX.Element {
                     </option>
                   ))}
                 </select>
-                <SingleFileUpload name="file_url" />
+
+              <SingleFileUpload name="file_url" />
+
               </div>
               <div className="mt-auto flex justify-end pt-4">
                 <Button type="submit" variant="outline">

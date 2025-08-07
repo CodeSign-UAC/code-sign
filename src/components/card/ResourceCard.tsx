@@ -1,4 +1,4 @@
-import { DoorOpen } from 'lucide-react'
+import { DoorOpen, Pencil, Trash2 } from 'lucide-react'
 import {
   Card,
   CardContent,
@@ -12,9 +12,11 @@ import { ResourceCategoryIcon } from '@/core/models/resource.model'
 
 interface Props {
   resource: Resource
+  onEdit?: () => void
+  onDelete?: () => void
 }
 
-export default function ResourceCard({ resource }: Props) {
+export default function ResourceCard({ resource, onEdit, onDelete}: Props) {
   return (
     <Card key={resource.id}>
       <CardHeader>
@@ -43,6 +45,30 @@ export default function ResourceCard({ resource }: Props) {
             <p className="text-sm text-muted-foreground">
               Duración: {resource.duration}
             </p>
+          )}
+          
+           {/* Botón Modificar */}
+          {onEdit && (
+            <Button
+              variant="outline"
+              className="cursor-pointer"
+              onClick={onEdit}
+            >
+              <Pencil className="mr-2" />
+              Modificar
+            </Button>
+          )}
+
+          {/* Botón Eliminar */}
+          {onDelete && (
+            <Button
+              variant="outline"
+              className="cursor-pointer"
+              onClick={onDelete}
+            >
+              <Trash2 className="mr-2" />
+              Eliminar
+            </Button>
           )}
         </div>
       </CardContent>

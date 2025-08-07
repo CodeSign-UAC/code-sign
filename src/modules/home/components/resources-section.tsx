@@ -19,17 +19,17 @@ const resourceIcon: Record<string, JSX.Element> = {
 
 const StatusTag: Record<ResourceStatus, JSX.Element> = {
   [ResourceStatus.Available]: (
-    <span className="text-green-600 text-sm font-medium bg-green-50 px-2 rounded-lg">
+    <span className="flex items-center justify-center text-green-600 text-xs bg-green-50 px-2 rounded-lg">
       Disponible
     </span>
   ),
   [ResourceStatus.DueSoon]: (
-    <span className="text-yellow-600 text-sm font-medium bg-yellow-50 px-2 rounded-lg">
+    <span className="flex items-center justify-center text-yellow-600 text-xs bg-yellow-50 px-2 rounded-lg">
       Próximo a vencer
     </span>
   ),
   [ResourceStatus.Completed]: (
-    <span className="text-blue-600 text-sm font-medium bg-blue-50 px-2 rounded-lg">
+    <span className="flex items-center justify-center text-blue-600 text-xs bg-blue-50 px-2 rounded-lg">
       Completado
     </span>
   )
@@ -70,11 +70,15 @@ export default function ResourceSection({ resources }: Props): JSX.Element {
           {filteredResources.map((resource: Resource): JSX.Element => (
             <Card key={resource.id}>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  {resourceIcon[resource.type]}
-                  {resource.title}
-                  <span className="px-2 rounded-lg font-semibold text-sm border">{resource.category}</span>
-                  {StatusTag[resource.status]}
+                <CardTitle className="flex max-md:flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    {resourceIcon[resource.type]}
+                    {resource.title}
+                  </div>
+                  <div className="flex gap-1">
+                    <span className="flex items-center justify-center px-2 rounded-lg font-semibold text-xs border">{resource.category}</span>
+                    {StatusTag[resource.status]}
+                  </div>
                 </CardTitle>
                 <CardDescription>{resource.description}</CardDescription>
               </CardHeader>

@@ -1,33 +1,21 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { Gavel, House, LogOut, MessageSquare } from 'lucide-react'
-import { useSession } from '../hooks/useSession'
-import type { JSX } from 'react/jsx-runtime'
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from '@/components/ui/sidebar'
+import { useAuth } from '../providers/auth.provider'
+import type React from 'react'
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar'
 import { supabase } from '@/lib/supabaseClient'
 import { Button } from '@/components/ui/button'
-import UserRole from '@/components/auth/UserRole'
 
 interface MenuItem {
   href: string
   label: string
-  icon: JSX.Element
+  icon: React.JSX.Element
 }
 
-export default function AppSidebar(): JSX.Element {
+export default function AppSidebar(): React.JSX.Element {
   const navigate = useNavigate()
-  const { session, user } = useSession()
+  const { role, name } = useAuth()
 
   const menuItems: Array<MenuItem> = [
     { href: '/app/home', label: 'Inicio', icon: <House /> },
@@ -56,10 +44,10 @@ export default function AppSidebar(): JSX.Element {
           </Avatar>
           <div>
             <p className="text-sm font-medium text-gray-600">
-              {user?.user_metadata.username}
+              {name}
             </p>
             <p className="text-xs text-muted-foreground">
-              <UserRole />
+              {role}
             </p>
           </div>
         </div>
@@ -71,7 +59,7 @@ export default function AppSidebar(): JSX.Element {
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map(
-                (item: MenuItem): JSX.Element => (
+                (item: MenuItem): React.JSX.Element => (
                   <SidebarMenuItem key={item.label}>
                     <SidebarMenuButton asChild>
                       <Link to={item.href}>

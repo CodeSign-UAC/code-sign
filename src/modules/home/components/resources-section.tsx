@@ -42,7 +42,7 @@ export default function ResourceSection({ resources }: Props): JSX.Element {
           />
         </div>
         <div className="space-y-4">
-          {filteredResources.map((resource: MstResource): JSX.Element => (
+          {filteredResources?.map((resource: MstResource): JSX.Element => (
             <Card key={resource.id_resource}>
               <CardHeader>
                 <CardTitle className="flex max-md:flex-col gap-2">

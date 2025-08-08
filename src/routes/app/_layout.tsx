@@ -1,7 +1,7 @@
 import { Outlet, createFileRoute } from '@tanstack/react-router'
 import { AppSidebar, Header } from '@/core/layout'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
-import type React from 'react'
+import { AuthProvider } from '@/core/providers/auth.provider'
 
 export const Route = createFileRoute('/app/_layout')({
   component: AppLayout,
@@ -9,16 +9,18 @@ export const Route = createFileRoute('/app/_layout')({
 
 function AppLayout(): React.JSX.Element {
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <div className="flex flex-col">
-          <Header />
-          <main className="flex-1 p-6">
-            <Outlet />
-          </main>
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
+    <AuthProvider>
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset>
+          <div className="flex flex-col">
+            <Header />
+            <main className="flex-1 p-6">
+              <Outlet />
+            </main>
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
+    </AuthProvider>
   )
 }

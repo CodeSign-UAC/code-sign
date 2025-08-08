@@ -8,7 +8,7 @@ import {
 } from '../ui/card'
 import { Button } from '../ui/button'
 import type { Resource } from '@/core/models'
-import { resourceCategoryIcon, resourceLabel } from '@/modules/models/resource.model'
+import { resourceCategoryIcon, resourceLabel } from '@/modules/resource/models/resource.model'
 
 interface Props {
   resource: Resource

@@ -1,20 +1,20 @@
 import { BookOpen, DoorOpen, Search } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import type { JSX } from 'react/jsx-runtime'
+import type { MstResource } from '@/modules/resource/models/resource.model'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import type { Resource } from '@/modules/models/resource.model'
-import { resourceCategoryIcon } from '@/modules/utils/resource.util'
+import { categoryIcon, categoryValue } from '@/modules/resource/utils/resource.util'
 
-interface Props { resources: Array<Resource> }
+interface Props { resources: Array<MstResource> | undefined }
 
 export default function ResourceSection({ resources }: Props): JSX.Element {
   const [searchTerm, setSearchTerm] = useState<string>('')
 
-  const filteredResources: Array<Resource> = useMemo(() => {
+  const filteredResources: Array<MstResource> | undefined = useMemo(() => {
     const lowerCaseSearchTerm: string = searchTerm.toLowerCase()
-    return resources.filter(
+    return resources?.filter(
       ({ title, description }) =>
         title.toLowerCase().includes(lowerCaseSearchTerm) ||
         description.toLowerCase().includes(lowerCaseSearchTerm)
@@ -42,16 +42,16 @@ export default function ResourceSection({ resources }: Props): JSX.Element {
           />
         </div>
         <div className="space-y-4">
-          {filteredResources.map((resource: Resource): JSX.Element => (
-            <Card key={resource.id}>
+          {filteredResources.map((resource: MstResource): JSX.Element => (
+            <Card key={resource.id_resource}>
               <CardHeader>
                 <CardTitle className="flex max-md:flex-col gap-2">
                   <div className="flex items-center gap-2">
-                    {resourceCategoryIcon[resource.idCategory]}
+                    {categoryIcon[resource.id_category]}
                     {resource.title}
                   </div>
                   <div className="flex gap-1">
-                    <span className="flex items-center justify-center px-2 rounded-lg font-semibold text-xs border">{resource.idCategory}</span>
+                    <span className="flex items-center justify-center px-2 rounded-lg font-semibold text-xs border">{categoryValue[resource.id_category]}</span>
                   </div>
                 </CardTitle>
                 <CardDescription>{resource.description}</CardDescription>
@@ -62,9 +62,9 @@ export default function ResourceSection({ resources }: Props): JSX.Element {
                     <DoorOpen />
                     Acceder
                   </Button>
-                  {resource.duration && (
+                  {/* {resource.duration && (
                     <p className="text-sm text-muted-foreground">Duración: {resource.duration}</p>
-                  )}
+                  )} */}
                 </div>
               </CardContent>
             </Card>

@@ -1,8 +1,7 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Book, GraduationCap, TrendingUp } from "lucide-react";
-import type { JSX } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-export default function WelcomeSection(): JSX.Element {
+export default function WelcomeSection(): React.JSX.Element {
   return (
     <Card>
       <CardHeader>

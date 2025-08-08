@@ -8,7 +8,7 @@ import {
 } from '../ui/card'
 import { Button } from '../ui/button'
 import type { Resource } from '@/core/models'
-import { ResourceCategoryIcon } from '@/core/models/resource.model'
+import { resourceCategoryIcon, resourceLabel } from '@/modules/models/resource.model'
 
 interface Props {
   resource: Resource
@@ -16,18 +16,12 @@ interface Props {
   onDelete?: () => void
 }
 
-export default function ResourceCard({ resource, onEdit, onDelete}: Props) {
+export default function ResourceCard({ resource, onEdit, onDelete }: Props) {
   return (
     <Card key={resource.id}>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          {(() => {
-            const Icon =
-              ResourceCategoryIcon[
-                resource.category as keyof typeof ResourceCategoryIcon
-              ]
-            return <Icon />
-          })()}
+          {resourceCategoryIcon[resource.category]}
           {resource.title}
           <span className="px-2 rounded-lg font-semibold text-sm border">
             {resource.category}
@@ -46,8 +40,8 @@ export default function ResourceCard({ resource, onEdit, onDelete}: Props) {
               Duración: {resource.duration}
             </p>
           )}
-          
-           {/* Botón Modificar */}
+
+          {/* Botón Modificar */}
           {onEdit && (
             <Button
               variant="outline"

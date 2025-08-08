@@ -1,40 +1,13 @@
 import { BookOpen, DoorOpen, Search } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import type { JSX } from 'react/jsx-runtime'
-import type { Resource } from '@/core/models'
 import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { ResourceStatus } from '@/core/models'
-import ResourceCard from '@/components/card/ResourceCard'
+import type { Resource } from '@/modules/models/resource.model'
+import { resourceCategoryIcon } from '@/modules/utils/resource.util'
 
-interface Props {
-  resources: Array<Resource>
-}
-
-const StatusTag: Record<ResourceStatus, JSX.Element> = {
-  [ResourceStatus.Available]: (
-    <span className="text-green-600 text-sm font-medium bg-green-50 px-2 rounded-lg">
-      Disponible
-    </span>
-  ),
-  [ResourceStatus.DueSoon]: (
-    <span className="text-yellow-600 text-sm font-medium bg-yellow-50 px-2 rounded-lg">
-      Próximo a vencer
-    </span>
-  ),
-  [ResourceStatus.Completed]: (
-    <span className="text-blue-600 text-sm font-medium bg-blue-50 px-2 rounded-lg">
-      Completado
-    </span>
-  ),
-}
+interface Props { resources: Array<Resource> }
 
 export default function ResourceSection({ resources }: Props): JSX.Element {
   const [searchTerm, setSearchTerm] = useState<string>('')
@@ -69,11 +42,33 @@ export default function ResourceSection({ resources }: Props): JSX.Element {
           />
         </div>
         <div className="space-y-4">
-          {filteredResources.map(
-            (resource: Resource): JSX.Element => (
-              <ResourceCard key={resource.id} resource={resource} />
-            ),
-          )}
+          {filteredResources.map((resource: Resource): JSX.Element => (
+            <Card key={resource.id}>
+              <CardHeader>
+                <CardTitle className="flex max-md:flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    {resourceCategoryIcon[resource.idCategory]}
+                    {resource.title}
+                  </div>
+                  <div className="flex gap-1">
+                    <span className="flex items-center justify-center px-2 rounded-lg font-semibold text-xs border">{resource.idCategory}</span>
+                  </div>
+                </CardTitle>
+                <CardDescription>{resource.description}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex gap-4 items-center">
+                  <Button variant={"outline"} className="cursor-pointer">
+                    <DoorOpen />
+                    Acceder
+                  </Button>
+                  {resource.duration && (
+                    <p className="text-sm text-muted-foreground">Duración: {resource.duration}</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </CardContent>
     </Card>

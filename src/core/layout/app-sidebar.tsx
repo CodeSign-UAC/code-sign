@@ -1,4 +1,8 @@
-import { Button } from '@/components/ui/button'
+import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar'
+import { Link, useNavigate } from '@tanstack/react-router'
+import { Gavel, House, LogOut, MessageSquare } from 'lucide-react'
+import { useSession } from '../hooks/useSession'
+import type { JSX } from 'react/jsx-runtime'
 import {
   Sidebar,
   SidebarContent,
@@ -10,21 +14,10 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail,
 } from '@/components/ui/sidebar'
 import { supabase } from '@/lib/supabaseClient'
-import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar'
-import { Link, useNavigate } from '@tanstack/react-router'
-import {
-  BookOpen,
-  Braces,
-  Gavel,
-  House,
-  LogOut,
-  MessageSquare,
-  User,
-} from 'lucide-react'
-import type { JSX } from 'react/jsx-runtime'
+import { Button } from '@/components/ui/button'
+import UserRole from '@/components/auth/UserRole'
 
 interface MenuItem {
   href: string
@@ -34,6 +27,7 @@ interface MenuItem {
 
 export default function AppSidebar(): JSX.Element {
   const navigate = useNavigate()
+  const { session, user } = useSession()
 
   const menuItems: Array<MenuItem> = [
     { href: '/app/home', label: 'Inicio', icon: <House /> },
@@ -44,7 +38,6 @@ export default function AppSidebar(): JSX.Element {
       label: 'Enviar comentario',
       icon: <MessageSquare />,
     },
-    { href: '/app/resources', label: 'Recursos', icon: <BookOpen /> },
   ]
 
   const handleLogout = async (): Promise<void> => {
@@ -62,8 +55,12 @@ export default function AppSidebar(): JSX.Element {
             <AvatarFallback>AM</AvatarFallback>
           </Avatar>
           <div>
-            <p className="text-sm font-medium text-gray-600">Roberto Amador</p>
-            <p className="text-xs text-muted-foreground">2430400</p>
+            <p className="text-sm font-medium text-gray-600">
+              {user?.user_metadata.username}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              <UserRole />
+            </p>
           </div>
         </div>
       </SidebarHeader>

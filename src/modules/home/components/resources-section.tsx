@@ -1,5 +1,5 @@
 import { BookOpen, DoorOpen, Search } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { JSX } from 'react/jsx-runtime'
 import type { Resource } from '@/core/models'
 import { Button } from '@/components/ui/button'
@@ -38,21 +38,16 @@ const StatusTag: Record<ResourceStatus, JSX.Element> = {
 
 export default function ResourceSection({ resources }: Props): JSX.Element {
   const [searchTerm, setSearchTerm] = useState<string>('')
-  const [filteredResources, setFilteredResources] =
-    useState<Array<Resource>>(resources)
 
-  useEffect((): void => {
-    if (searchTerm.trim() === '') setFilteredResources(resources)
-    else {
-      const lowerCaseSearchTerm: string = searchTerm.toLowerCase()
-      const filtered: Array<Resource> = resources.filter(
-        ({ title, description }) =>
-          title.toLowerCase().includes(lowerCaseSearchTerm) ||
-          description.toLowerCase().includes(lowerCaseSearchTerm),
-      )
-      setFilteredResources(filtered)
-    }
+  const filteredResources: Array<Resource> = useMemo(() => {
+    const lowerCaseSearchTerm: string = searchTerm.toLowerCase()
+    return resources.filter(
+      ({ title, description }) =>
+        title.toLowerCase().includes(lowerCaseSearchTerm) ||
+        description.toLowerCase().includes(lowerCaseSearchTerm)
+    )
   }, [searchTerm])
+
   return (
     <Card>
       <CardHeader>

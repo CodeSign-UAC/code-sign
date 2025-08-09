@@ -42,7 +42,7 @@ export function useSession() {
 
   const { data, isLoading: roleLoading } = useUserRole(jwt?.sub ?? '')
   const role: UserRoles = renderRole(data?.[0]?.id_role ?? 0)
-  const name: string = data?.[0]?.first_name + ' ' + (data?.[0]?.surname || '')
+  const name: string = data?.[0].first_name + ' ' + (data?.[0].surname || '')
 
   return {
     session: currentSession,
@@ -50,6 +50,7 @@ export function useSession() {
     jwt,
     role,
     name,
+    user_id: data?.[0].id_user,
     loading: loading || roleLoading
   }
 }

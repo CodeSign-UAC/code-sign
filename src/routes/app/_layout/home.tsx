@@ -1,10 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import type { MstResource } from '@/modules/resource/models/resource.model'
-import WelcomeSection from '@/modules/home/components/welcome-section'
-import { fetchUserResources } from '@/modules/resource/services/resource.service'
-import ResourceSection from '@/modules/home/components/resources-section'
-import { useAuth } from '@/core/providers'
+import { fetchUserResources } from '@/modules/resource/resource.service'
+import WelcomeSection from '@/components/home/stats-section'
+import ResourceSection from '@/components/home/resources-section'
+import { useAuth } from '@/modules/auth/auth.provider'
+import type { MstResource } from '@/modules/resource/resource.model'
 
 export const Route = createFileRoute('/app/_layout/home')({
   component: DashboardPage,
@@ -30,10 +30,16 @@ function DashboardPage(): React.JSX.Element {
   return (
     <div className="space-y-4">
       <section>
-        <WelcomeSection resources={data} isLoading={isLoading} />
+        <WelcomeSection
+          resources={data}
+          isLoading={isLoading}
+        />
       </section>
       <section>
-        <ResourceSection resources={data} isLoading={isLoading} />
+        <ResourceSection
+          resources={data}
+          isLoading={isLoading}
+        />
       </section>
     </div>
   )

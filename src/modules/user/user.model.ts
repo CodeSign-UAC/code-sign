@@ -11,4 +11,4 @@ export interface MstUser {
 }
 
 // DTO para la obtención del rol y el nombre del usuario (GET)
-export interface GetUserRoleDto extends Pick<MstUser, 'id_user' | 'id_role' | 'first_name' | 'surname'> { }
+export interface GetUserDto extends Pick<MstUser, 'id_user' | 'id_role' | 'first_name' | 'surname'> { }

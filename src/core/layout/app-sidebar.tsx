@@ -5,7 +5,7 @@ import type React from 'react'
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar'
 import { supabase } from '@/lib/supabaseClient'
 import { Button } from '@/components/ui/button'
-import { useAuth } from '../providers'
+import { useAuth } from '@/modules/auth/auth.provider'
 
 interface MenuItem {
   href: string

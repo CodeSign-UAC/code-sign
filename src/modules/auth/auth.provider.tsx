@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
-import { useSession } from "../hooks/useSession";
-import Spinner from "@/components/spinner";
+import { useSession } from "../../core/hooks/useSession";
+import Spinner from "@/components/auth/spinner";
 
 
 interface AuthContextProps {

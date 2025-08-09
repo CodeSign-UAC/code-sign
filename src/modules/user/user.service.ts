@@ -1,8 +1,7 @@
-import { useQuery } from "@tanstack/react-query"
-import type { GetUserRoleDto } from "../models/user.model"
+import type { GetUserDto } from "@/modules/user/user.model"
 import { supabase } from "@/lib/supabaseClient"
 
-const fetchUserRole = async (uuid: string): Promise<GetUserRoleDto[]> => {
+const fetchUser = async (uuid: string): Promise<GetUserDto[]> => {
   try {
     const { data, error } = await supabase.rpc('get_user_by_uuid', {
       p_uuid: uuid,
@@ -23,15 +22,11 @@ const fetchUserRole = async (uuid: string): Promise<GetUserRoleDto[]> => {
 
     return data || null
   } catch (err) {
-    console.error('Error inesperado en fetchUserRole:', err)
+    console.error('Error inesperado en fetchUser:', err)
     throw err
   }
 }
 
-export const useUserRole = (uuid: string) => {
-  return useQuery({
-    queryKey: ["userRole", uuid],
-    queryFn: (): Promise<GetUserRoleDto[]> => fetchUserRole(uuid),
-    enabled: !!uuid
-  });
-};
+export {
+  fetchUser
+}

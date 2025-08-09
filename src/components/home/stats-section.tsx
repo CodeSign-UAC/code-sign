@@ -1,7 +1,7 @@
 import { Book, GraduationCap, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import type { MstResource } from "@/modules/resource/models/resource.model";
 import { Skeleton } from "@/components/ui/skeleton";
+import type { MstResource } from "@/modules/resource/resource.model";
 
 interface Props {
   resources: MstResource[] | undefined

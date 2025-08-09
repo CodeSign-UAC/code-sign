@@ -1,11 +1,12 @@
 import { BookOpen, DoorOpen, Search, SearchX } from 'lucide-react'
 import React, { useMemo, useState } from 'react'
-import type { MstResource } from '@/modules/resource/models/resource.model'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { categoryIcon, categoryValue } from '@/modules/resource/utils/resource.util'
+import { categoryIcon, categoryValue } from '@/modules/resource/resource.util'
 import { Skeleton } from '@/components/ui/skeleton'
+import type { MstResource } from '@/modules/resource/resource.model'
+import { Badge } from '../ui/badge'
 
 interface Props {
   resources: MstResource[] | undefined
@@ -79,9 +80,9 @@ const renderResources = (resources: Array<MstResource>) => {
             <h3 className='line-clamp-1'>{resource.title}</h3>
           </div>
         </CardTitle>
-        <div className="inline w-fit px-2 py-0.5 mt-1 rounded-lg text-xs border">
-          <span className='leading-0 font-medium'>{categoryValue[resource.id_category]}</span>
-        </div>
+        <Badge className='mt-1' variant='outline'>
+          <span className='font-medium text-xs'>{categoryValue[resource.id_category]}</span>
+        </Badge>
         <div className='flex max-lg:flex-col gap-2 lg:items-center lg:justify-between '>
           <CardDescription className='text-start'>{resource.description}</CardDescription>
           <div className="flex justify-end gap-4 items-center">

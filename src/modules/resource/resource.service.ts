@@ -1,7 +1,7 @@
-import type { MstResource } from '../models/resource.model'
 import { supabase } from '@/lib/supabaseClient'
+import type { MstResource } from './resource.model'
 
-export const fetchUserResources = async (userId: number): Promise<Array<MstResource>> => {
+export const fetchUserResources = async (userId: number): Promise<MstResource[]> => {
   try {
     const { data, error } = await supabase.rpc('search_resources_by_user_id', {
       p_id_user: userId,

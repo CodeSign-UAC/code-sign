@@ -7,7 +7,6 @@ import * as TanStackQueryProvider from './integrations/tanstack-query/root-provi
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'
 import './styles.css'
-import { SidebarProvider } from './core/providers/index.ts'
 // import reportWebVitals from './reportWebVitals.ts'
 
 // Create a new router instance
@@ -34,9 +33,7 @@ if (rootElement && !rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <TanStackQueryProvider.Provider>
-        <SidebarProvider>
-          <RouterProvider router={router} />
-        </SidebarProvider>
+        <RouterProvider router={router} />
       </TanStackQueryProvider.Provider>
     </StrictMode>,
   )

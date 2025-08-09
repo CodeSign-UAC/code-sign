@@ -1,40 +1,55 @@
 import { useEffect, useState } from 'react'
 import { jwtDecode } from 'jwt-decode'
 import { supabase } from '../../lib/supabaseClient'
-import type { Session } from '@supabase/supabase-js'
+import { useUserRole } from './useRole'
+import type { JwtPayload, Session } from '@supabase/supabase-js'
+
+type UserRoles = 'Administrador' | 'Profesor' | 'Estudiante' | 'Usuario'
+
+const renderRole = (role: number): UserRoles => {
+  switch (role) {
+    case 1: return 'Administrador'
+    case 2: return 'Profesor'
+    case 3: return 'Estudiante'
+    default: return 'Usuario'
+  }
+}
 
 export function useSession() {
   const [currentSession, setCurrentSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
-  const [role, setRole] = useState<string | null>(null)
+  const [jwt, setJwt] = useState<JwtPayload>()
 
   useEffect(() => {
-    // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setCurrentSession(session)
       setLoading(false)
       if (session?.access_token) {
-        const jwt = jwtDecode(session.access_token)
-        setRole((jwt as any).user_role ?? 'student')
+        setJwt(jwtDecode(session.access_token))
       }
     })
 
-    // Listen for auth state changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setCurrentSession(session)
       setLoading(false)
+      if (session?.access_token) {
+        setJwt(jwtDecode(session.access_token))
+      }
     })
 
-    // Cleanup subscription on unmount
     return () => subscription.unsubscribe()
   }, [])
+
+  const { data, isLoading: roleLoading } = useUserRole(jwt?.sub ?? '')
+  const role: UserRoles = renderRole(data?.[0]?.id_role ?? 0)
+  const name: string = data?.[0]?.first_name + ' ' + (data?.[0]?.surname || '')
 
   return {
     session: currentSession,
     user: currentSession?.user,
-    loading,
+    jwt,
     role,
+    name,
+    loading: loading || roleLoading
   }
 }

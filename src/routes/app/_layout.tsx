@@ -1,15 +1,15 @@
 import { Outlet, createFileRoute } from '@tanstack/react-router'
-import { useEffect, type JSX } from 'react'
 import { AppSidebar, Header } from '@/core/layout'
-import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
+import { AuthProvider } from '@/core/providers/auth.provider'
 
 export const Route = createFileRoute('/app/_layout')({
   component: AppLayout,
 })
 
-function AppLayout(): JSX.Element {
+function AppLayout(): React.JSX.Element {
   return (
-    <>
+    <AuthProvider>
       <SidebarProvider>
         <AppSidebar />
         <SidebarInset>
@@ -21,6 +21,6 @@ function AppLayout(): JSX.Element {
           </div>
         </SidebarInset>
       </SidebarProvider>
-    </>
+    </AuthProvider>
   )
 }

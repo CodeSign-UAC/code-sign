@@ -1,55 +1,24 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { ResourceStatus, type Resource } from "@/core/models";
-import { Binoculars, BookOpen, ClipboardList, DoorOpen, FileTextIcon, Search, VideoIcon } from "lucide-react";
-import { useEffect, useState } from "react";
-import type { JSX } from "react/jsx-runtime";
+import { BookOpen, DoorOpen, Search } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import type { JSX } from 'react/jsx-runtime'
+import type { MstResource } from '@/modules/resource/models/resource.model'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { categoryIcon, categoryValue } from '@/modules/resource/utils/resource.util'
 
-interface Props {
-  resources: Array<Resource>
-}
-
-const resourceIcon: Record<string, JSX.Element> = {
-  ['video']: <VideoIcon />,
-  ['document']: <FileTextIcon />,
-  ['assignment']: <ClipboardList />,
-  ['tutorial']: <Binoculars />
-}
-
-const StatusTag: Record<ResourceStatus, JSX.Element> = {
-  [ResourceStatus.Available]: (
-    <span className="text-green-600 text-sm font-medium bg-green-50 px-2 rounded-lg">
-      Disponible
-    </span>
-  ),
-  [ResourceStatus.DueSoon]: (
-    <span className="text-yellow-600 text-sm font-medium bg-yellow-50 px-2 rounded-lg">
-      Próximo a vencer
-    </span>
-  ),
-  [ResourceStatus.Completed]: (
-    <span className="text-blue-600 text-sm font-medium bg-blue-50 px-2 rounded-lg">
-      Completado
-    </span>
-  )
-}
+interface Props { resources: Array<MstResource> | undefined }
 
 export default function ResourceSection({ resources }: Props): JSX.Element {
-  const [searchTerm, setSearchTerm] = useState<string>("")
-  const [filteredResources, setFilteredResources] = useState<Array<Resource>>(resources)
+  const [searchTerm, setSearchTerm] = useState<string>('')
 
-  useEffect((): void => {
-    if (searchTerm.trim() === "")
-      setFilteredResources(resources)
-    else {
-      const lowerCaseSearchTerm: string = searchTerm.toLowerCase()
-      const filtered: Array<Resource> = resources.filter(({ title, description }) =>
+  const filteredResources: Array<MstResource> | undefined = useMemo(() => {
+    const lowerCaseSearchTerm: string = searchTerm.toLowerCase()
+    return resources?.filter(
+      ({ title, description }) =>
         title.toLowerCase().includes(lowerCaseSearchTerm) ||
         description.toLowerCase().includes(lowerCaseSearchTerm)
-      )
-      setFilteredResources(filtered)
-    }
+    )
   }, [searchTerm])
 
   return (
@@ -59,22 +28,31 @@ export default function ResourceSection({ resources }: Props): JSX.Element {
           <BookOpen size={32} />
           <h2 className="text-xl font-semibold">Recursos</h2>
         </CardTitle>
-        <CardDescription>Accede a una lista de recursos útiles para tu aprendizaje.</CardDescription>
+        <CardDescription>
+          Accede a una lista de recursos útiles para tu aprendizaje.
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="relative">
           <Search className="absolute left-3 top-3 text-muted-foreground h-4 w-4" />
-          <Input placeholder="Buscar recursos..." onChange={(e): void => setSearchTerm(e.target.value)} className="pl-10" />
+          <Input
+            placeholder="Buscar recursos..."
+            onChange={(e): void => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
         </div>
         <div className="space-y-4">
-          {filteredResources.map((resource: Resource): JSX.Element => (
-            <Card key={resource.id}>
+          {filteredResources?.map((resource: MstResource): JSX.Element => (
+            <Card key={resource.id_resource}>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  {resourceIcon[resource.type]}
-                  {resource.title}
-                  <span className="px-2 rounded-lg font-semibold text-sm border">{resource.category}</span>
-                  {StatusTag[resource.status]}
+                <CardTitle className="flex max-md:flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    {categoryIcon[resource.id_category]}
+                    {resource.title}
+                  </div>
+                  <div className="flex gap-1">
+                    <span className="flex items-center justify-center px-2 rounded-lg font-semibold text-xs border">{categoryValue[resource.id_category]}</span>
+                  </div>
                 </CardTitle>
                 <CardDescription>{resource.description}</CardDescription>
               </CardHeader>
@@ -84,11 +62,9 @@ export default function ResourceSection({ resources }: Props): JSX.Element {
                     <DoorOpen />
                     Acceder
                   </Button>
-                  {resource.duration && (
-                    <p className="text-sm text-muted-foreground">
-                      Duración: {resource.duration}
-                    </p>
-                  )}
+                  {/* {resource.duration && (
+                    <p className="text-sm text-muted-foreground">Duración: {resource.duration}</p>
+                  )} */}
                 </div>
               </CardContent>
             </Card>

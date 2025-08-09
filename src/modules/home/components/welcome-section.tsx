@@ -1,7 +1,14 @@
 import { Book, GraduationCap, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import type { MstResource } from "@/modules/resource/models/resource.model";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export default function WelcomeSection(): React.JSX.Element {
+interface Props {
+  resources: MstResource[] | undefined
+  isLoading: boolean
+}
+
+export default function WelcomeSection({ resources = [], isLoading }: Props): React.JSX.Element {
   return (
     <Card>
       <CardHeader>
@@ -9,28 +16,47 @@ export default function WelcomeSection(): React.JSX.Element {
           <GraduationCap size={32} />
           <h1 className="text-xl font-semibold">¡Bienvenido a CodeSign!</h1>
         </CardTitle>
-        <CardDescription>
-          Aquí hay un breve desglose de tu progreso y actividad reciente.
-        </CardDescription>
+        <CardDescription>Aquí hay un breve desglose de tu progreso y actividad reciente.</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <div className="flex items-center bg-blue-100 p-4 rounded-lg gap-3">
-            <Book size={32} className="text-blue-600" />
-            <div>
-              <h2 className="text-lg font-bold">12</h2>
-              <p className="text-base text-muted-foreground">Recursos accedidos</p>
-            </div>
-          </div>
-          <div className="flex items-center bg-purple-100 p-4 rounded-lg gap-3">
-            <TrendingUp size={32} className="text-purple-600" />
-            <div>
-              <h2 className="text-lg font-bold">60%</h2>
-              <p className="text-base text-muted-foreground">Progreso del curso</p>
-            </div>
-          </div>
+          {isLoading ? (
+            Array.from(({ length: 2 })).map((_, index: number): React.JSX.Element => (
+              <div key={index} className="flex items-center space-x-4 p-4">
+                <Skeleton className="h-12 w-12 rounded-full" />
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-[50px]" />
+                  <Skeleton className="h-4 w-[200px]" />
+                </div>
+              </div>
+            ))
+          ) : renderStats(resources)}
         </div>
       </CardContent>
     </Card>
+  )
+}
+
+const renderStats = (resources: MstResource[]) => {
+  const addedResources: number = resources.length || 0
+  const courseProgress: number = 0; {/* En base a has_completed */ }
+
+  return (
+    <>
+      <div className="flex items-center bg-blue-100 p-4 rounded-lg gap-3">
+        <Book size={32} className="text-blue-600" />
+        <div>
+          <h2 className="text-lg font-bold">{addedResources}</h2>
+          <p className="text-base font-normal">Recursos añadidos</p>
+        </div>
+      </div>
+      <div className="flex items-center bg-purple-100 p-4 rounded-lg gap-3">
+        <TrendingUp size={32} className="text-purple-600" />
+        <div>
+          <h2 className="text-lg font-bold">{courseProgress}%</h2>
+          <p className="text-base font-normal">Progreso del curso</p>
+        </div>
+      </div>
+    </>
   )
 }

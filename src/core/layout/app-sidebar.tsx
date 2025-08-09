@@ -1,11 +1,11 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar'
-import { Link, useNavigate } from '@tanstack/react-router'
-import { Gavel, House, LogOut, MessageSquare } from 'lucide-react'
-import { useAuth } from '../providers/auth.provider'
+import { Link, useLocation, useNavigate } from '@tanstack/react-router'
+import { BookOpen, Gavel, House, LogOut, MessageSquare } from 'lucide-react'
 import type React from 'react'
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar'
 import { supabase } from '@/lib/supabaseClient'
 import { Button } from '@/components/ui/button'
+import { useAuth } from '../providers'
 
 interface MenuItem {
   href: string
@@ -13,20 +13,17 @@ interface MenuItem {
   icon: React.JSX.Element
 }
 
+const menuItems: MenuItem[] = [
+  { href: '/app/home', label: 'Inicio', icon: <House /> },
+  { href: '/app/resources', label: 'Recursos', icon: <BookOpen /> }, // No debería estar disponible para Alumnos, debería ser el crud (?).
+  { href: '/app/glossary', label: 'Glosario técnico', icon: <Gavel /> },
+  { href: '/app/feedback', label: 'Enviar comentario', icon: <MessageSquare /> }
+]
+
 export default function AppSidebar(): React.JSX.Element {
   const navigate = useNavigate()
+  const location = useLocation()
   const { role, name } = useAuth()
-
-  const menuItems: Array<MenuItem> = [
-    { href: '/app/home', label: 'Inicio', icon: <House /> },
-    // { href: '/app/resources', label: 'Recursos', icon: <BookOpen /> }, // No disponible para Alumnos.
-    { href: '/app/glossary', label: 'Glosario técnico', icon: <Gavel /> },
-    {
-      href: '/app/feedback',
-      label: 'Enviar comentario',
-      icon: <MessageSquare />,
-    },
-  ]
 
   const handleLogout = async (): Promise<void> => {
     const { error } = await supabase.auth.signOut()
@@ -43,12 +40,8 @@ export default function AppSidebar(): React.JSX.Element {
             <AvatarFallback>AM</AvatarFallback>
           </Avatar>
           <div>
-            <p className="text-sm font-medium text-gray-600">
-              {name}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              {role}
-            </p>
+            <p className="text-sm font-medium text-gray-600">{name}</p>
+            <p className="text-xs text-muted-foreground">{role}</p>
           </div>
         </div>
       </SidebarHeader>
@@ -58,18 +51,19 @@ export default function AppSidebar(): React.JSX.Element {
           <SidebarGroupLabel>Navegación</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {menuItems.map(
-                (item: MenuItem): React.JSX.Element => (
+              {menuItems.map((item: MenuItem): React.JSX.Element => {
+                const isActive: boolean = location.pathname === item.href
+                return (
                   <SidebarMenuItem key={item.label}>
-                    <SidebarMenuButton asChild>
+                    <SidebarMenuButton asChild className={`${isActive && 'bg-sidebar-accent text-blue-600'} hover:text-blue-600 active:text-blue-600`}>
                       <Link to={item.href}>
                         {item.icon}
                         <span className="text-sm">{item.label}</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                ),
-              )}
+                )
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

@@ -3,7 +3,7 @@ import { jwtDecode } from 'jwt-decode'
 import { supabase } from '../../lib/supabaseClient'
 import type { JwtPayload, Session } from '@supabase/supabase-js'
 import { useQuery } from '@tanstack/react-query'
-import type { GetUserDto } from '../../modules/user/user.model'
+import type { UserDto } from '../../modules/user/user.model'
 import { fetchUser } from '@/modules/user/user.service'
 
 type UserRoles = 'Administrador' | 'Profesor' | 'Estudiante' | 'Usuario'
@@ -23,9 +23,9 @@ const renderRole = (role: number): UserRoles => {
 
 export const useUserQuery = (uuid: string) => {
   return useQuery({
-    queryKey: ['user', uuid],
-    queryFn: (): Promise<GetUserDto[]> => fetchUser(uuid),
-    enabled: !!uuid,
+    queryKey: ["user", uuid],
+    queryFn: (): Promise<UserDto[]> => fetchUser(uuid),
+    enabled: !!uuid
   })
 }
 

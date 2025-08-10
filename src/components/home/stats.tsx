@@ -8,7 +8,7 @@ interface Props {
   isLoading: boolean
 }
 
-export default function WelcomeSection({ resources = [], isLoading }: Props): React.JSX.Element {
+export default function Stats({ resources = [], isLoading }: Props): React.JSX.Element {
   return (
     <Card>
       <CardHeader>
@@ -47,7 +47,7 @@ const renderStats = (resources: MstResource[]) => {
         <Book size={32} className="text-blue-600" />
         <div>
           <h2 className="text-lg font-bold">{addedResources}</h2>
-          <p className="text-base font-normal">Recursos añadidos</p>
+          <p className="text-base font-normal">Recursos asignados</p>
         </div>
       </div>
       <div className="flex items-center bg-purple-100 p-4 rounded-lg gap-3">

@@ -30,10 +30,10 @@ export default function ResourceSection({
 
     return resources.length
       ? resources.filter(
-          ({ title, description }) =>
-            title.toLowerCase().includes(lowerCaseSearchTerm) ||
-            description.toLowerCase().includes(lowerCaseSearchTerm),
-        )
+        ({ title, description }) =>
+          title.toLowerCase().includes(lowerCaseSearchTerm) ||
+          description.toLowerCase().includes(lowerCaseSearchTerm),
+      )
       : []
   }, [searchTerm, isLoading])
 
@@ -60,16 +60,16 @@ export default function ResourceSection({
         <div className={`space-y-4 ${isLoading && 'space-y-8'}`}>
           {isLoading
             ? Array.from({ length: 2 }).map(
-                (_, index: number): React.JSX.Element => (
-                  <div key={index} className="flex flex-col space-y-4">
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-full" />
-                    <div>
-                      <Skeleton className="h-8 w-[100px]" />
-                    </div>
+              (_, index: number): React.JSX.Element => (
+                <div key={index} className="flex flex-col space-y-4">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-full" />
+                  <div>
+                    <Skeleton className="h-8 w-[100px]" />
                   </div>
-                ),
-              )
+                </div>
+              ),
+            )
             : renderResources(filteredResources)}
         </div>
       </CardContent>

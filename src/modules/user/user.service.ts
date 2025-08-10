@@ -1,7 +1,7 @@
-import type { GetUserDto } from "@/modules/user/user.model"
+import type { UserDto } from "@/modules/user/user.model"
 import { supabase } from "@/lib/supabaseClient"
 
-const fetchUser = async (uuid: string): Promise<GetUserDto[]> => {
+const fetchUser = async (uuid: string): Promise<UserDto[]> => {
   try {
     const { data, error } = await supabase.rpc('get_user_by_uuid', {
       p_uuid: uuid,

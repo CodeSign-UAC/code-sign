@@ -7,7 +7,7 @@ export const Route = createFileRoute('/_layout/')({
 })
 
 function LoginPage(): JSX.Element {
-  const navigate = useNavigate({ from: Route.id })
+  const navigate = useNavigate()
 
   const handleAuthSuccess = () => {
     navigate({ to: '/app/home' })

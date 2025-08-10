@@ -10,7 +10,7 @@ export const Route = createFileRoute('/app/_layout/home')({
   component: DashboardPage,
 })
 
-export function useUserResources(userId: number) {
+function useUserResources(userId: number) {
   return useQuery({
     queryKey: ['resources', userId],
     queryFn: (): Promise<MstResource[]> => fetchUserResources(userId),
@@ -30,16 +30,10 @@ function DashboardPage(): React.JSX.Element {
   return (
     <div className="space-y-4">
       <section>
-        <WelcomeSection
-          resources={data}
-          isLoading={isLoading}
-        />
+        <WelcomeSection resources={data} isLoading={isLoading} />
       </section>
       <section>
-        <ResourceSection
-          resources={data}
-          isLoading={isLoading}
-        />
+        <ResourceSection resources={data} isLoading={isLoading} />
       </section>
     </div>
   )

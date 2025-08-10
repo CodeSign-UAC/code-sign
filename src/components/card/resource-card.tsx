@@ -8,7 +8,7 @@ import {
 } from '../ui/card'
 import { Button } from '../ui/button'
 import type { Resource } from '@/core/models'
-import { resourceCategoryIcon, resourceLabel } from '@/modules/resource/models/resource.model'
+// import { resourceCategoryIcon } from '@/modules/resource/models/resource.model'
 
 interface Props {
   resource: Resource
@@ -21,7 +21,7 @@ export default function ResourceCard({ resource, onEdit, onDelete }: Props) {
     <Card key={resource.id}>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          {resourceCategoryIcon[resource.category]}
+          {/* resourceCategoryIcon[resource.category] */}
           {resource.title}
           <span className="px-2 rounded-lg font-semibold text-sm border">
             {resource.category}
@@ -35,12 +35,13 @@ export default function ResourceCard({ resource, onEdit, onDelete }: Props) {
             <DoorOpen />
             Acceder
           </Button>
+          {/*
           {resource.duration && (
             <p className="text-sm text-muted-foreground">
               Duración: {resource.duration}
             </p>
           )}
-
+          */}
           {/* Botón Modificar */}
           {onEdit && (
             <Button
@@ -52,7 +53,6 @@ export default function ResourceCard({ resource, onEdit, onDelete }: Props) {
               Modificar
             </Button>
           )}
-
           {/* Botón Eliminar */}
           {onDelete && (
             <Button

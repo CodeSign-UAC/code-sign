@@ -16,6 +16,7 @@ import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as AppLayoutRouteImport } from './routes/app/_layout'
 import { Route as AppLayoutResourcesRouteImport } from './routes/app/_layout/resources'
 import { Route as AppLayoutHomeRouteImport } from './routes/app/_layout/home'
+import { Route as AppLayoutGlossaryRouteImport } from './routes/app/_layout/glossary'
 
 const AppRouteImport = createFileRoute('/app')()
 
@@ -47,16 +48,23 @@ const AppLayoutHomeRoute = AppLayoutHomeRouteImport.update({
   path: '/home',
   getParentRoute: () => AppLayoutRoute,
 } as any)
+const AppLayoutGlossaryRoute = AppLayoutGlossaryRouteImport.update({
+  id: '/glossary',
+  path: '/glossary',
+  getParentRoute: () => AppLayoutRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/app': typeof AppLayoutRouteWithChildren
   '/': typeof LayoutIndexRoute
+  '/app/glossary': typeof AppLayoutGlossaryRoute
   '/app/home': typeof AppLayoutHomeRoute
   '/app/resources': typeof AppLayoutResourcesRoute
 }
 export interface FileRoutesByTo {
   '/app': typeof AppLayoutRouteWithChildren
   '/': typeof LayoutIndexRoute
+  '/app/glossary': typeof AppLayoutGlossaryRoute
   '/app/home': typeof AppLayoutHomeRoute
   '/app/resources': typeof AppLayoutResourcesRoute
 }
@@ -66,20 +74,22 @@ export interface FileRoutesById {
   '/app': typeof AppRouteWithChildren
   '/app/_layout': typeof AppLayoutRouteWithChildren
   '/_layout/': typeof LayoutIndexRoute
+  '/app/_layout/glossary': typeof AppLayoutGlossaryRoute
   '/app/_layout/home': typeof AppLayoutHomeRoute
   '/app/_layout/resources': typeof AppLayoutResourcesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/app' | '/' | '/app/home' | '/app/resources'
+  fullPaths: '/app' | '/' | '/app/glossary' | '/app/home' | '/app/resources'
   fileRoutesByTo: FileRoutesByTo
-  to: '/app' | '/' | '/app/home' | '/app/resources'
+  to: '/app' | '/' | '/app/glossary' | '/app/home' | '/app/resources'
   id:
     | '__root__'
     | '/_layout'
     | '/app'
     | '/app/_layout'
     | '/_layout/'
+    | '/app/_layout/glossary'
     | '/app/_layout/home'
     | '/app/_layout/resources'
   fileRoutesById: FileRoutesById
@@ -133,6 +143,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppLayoutHomeRouteImport
       parentRoute: typeof AppLayoutRoute
     }
+    '/app/_layout/glossary': {
+      id: '/app/_layout/glossary'
+      path: '/glossary'
+      fullPath: '/app/glossary'
+      preLoaderRoute: typeof AppLayoutGlossaryRouteImport
+      parentRoute: typeof AppLayoutRoute
+    }
   }
 }
 
@@ -148,11 +165,13 @@ const LayoutRouteWithChildren =
   LayoutRoute._addFileChildren(LayoutRouteChildren)
 
 interface AppLayoutRouteChildren {
+  AppLayoutGlossaryRoute: typeof AppLayoutGlossaryRoute
   AppLayoutHomeRoute: typeof AppLayoutHomeRoute
   AppLayoutResourcesRoute: typeof AppLayoutResourcesRoute
 }
 
 const AppLayoutRouteChildren: AppLayoutRouteChildren = {
+  AppLayoutGlossaryRoute: AppLayoutGlossaryRoute,
   AppLayoutHomeRoute: AppLayoutHomeRoute,
   AppLayoutResourcesRoute: AppLayoutResourcesRoute,
 }

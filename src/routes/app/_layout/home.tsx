@@ -1,16 +1,16 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { fetchUserResources } from '@/modules/resource/resource.service'
-import WelcomeSection from '@/components/home/stats-section'
-import ResourceSection from '@/components/home/resources-section'
 import { useAuth } from '@/modules/auth/auth.provider'
 import type { MstResource } from '@/modules/resource/resource.model'
+import Stats from '@/components/home/stats'
+import HomeResources from '@/components/home/home-resources'
 
 export const Route = createFileRoute('/app/_layout/home')({
   component: DashboardPage,
 })
 
-export function useUserResources(userId: number) {
+export function getUserResourcesQuery(userId: number) {
   return useQuery({
     queryKey: ['resources', userId],
     queryFn: (): Promise<MstResource[]> => fetchUserResources(userId),
@@ -20,23 +20,18 @@ export function useUserResources(userId: number) {
 
 function DashboardPage(): React.JSX.Element {
   const { user_id } = useAuth()
-  const { data, isLoading } = useUserResources(user_id ?? 0)
-
-  // useEffect(() => {
-  //   console.log('Is loading:', isLoading);
-  //   console.log('Data:', data);
-  // }, [isLoading, data])
+  const { data, isLoading } = getUserResourcesQuery(user_id ?? 0)
 
   return (
     <div className="space-y-4">
       <section>
-        <WelcomeSection
+        <Stats
           resources={data}
           isLoading={isLoading}
         />
       </section>
       <section>
-        <ResourceSection
+        <HomeResources
           resources={data}
           isLoading={isLoading}
         />

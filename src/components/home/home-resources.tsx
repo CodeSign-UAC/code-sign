@@ -13,7 +13,7 @@ interface Props {
   isLoading: boolean
 }
 
-export default function ResourceSection({ resources = [], isLoading }: Props): React.JSX.Element {
+export default function HomeResources({ resources = [], isLoading }: Props): React.JSX.Element {
   const [searchTerm, setSearchTerm] = useState<string>('')
 
   const filteredResources: MstResource[] = useMemo(() => {

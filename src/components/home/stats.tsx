@@ -8,7 +8,7 @@ interface Props {
   isLoading: boolean
 }
 
-export default function WelcomeSection({ resources = [], isLoading }: Props): React.JSX.Element {
+export default function Stats({ resources = [], isLoading }: Props): React.JSX.Element {
   return (
     <Card>
       <CardHeader>

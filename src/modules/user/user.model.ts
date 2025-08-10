@@ -1,14 +1,13 @@
-export interface MstUser {
+import type { TableRecord } from "@/core/models/sql.model"
+
+export interface MstUser extends TableRecord {
   id_user: number
   user_uuid: number
   id_role: number
   first_name: string
   surname?: string
-  created_at: Date
-  updated_at?: Date
   last_login_at?: Date
-  status: number
 }
 
 // DTO para la obtención del rol y el nombre del usuario (GET)
-export interface GetUserDto extends Pick<MstUser, 'id_user' | 'id_role' | 'first_name' | 'surname'> { }
+export interface UserDto extends Pick<MstUser, 'id_user' | 'id_role' | 'first_name' | 'surname'> { }

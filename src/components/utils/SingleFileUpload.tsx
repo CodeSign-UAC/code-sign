@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { UploadCloudIcon } from 'lucide-react'
 import { supabase } from '@/lib/supabaseClient'
-import { Value } from '@radix-ui/react-select'
 
 interface Props {
   name: string
@@ -12,7 +11,7 @@ interface Props {
 export function SingleFileUpload({ name, value, onChange }: Props) {
   const [fileName, setFileName] = useState('')
   const [uploading, setUploading] = useState(false)
-  const [currentPublicUrl, setPublicUrl] = useState('')
+  const [_currentPublicUrl, setPublicUrl] = useState('')
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
@@ -35,16 +34,15 @@ export function SingleFileUpload({ name, value, onChange }: Props) {
       return
     }
 
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from('tu-bucket').getPublicUrl(filePath)
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from('tu-bucket').getPublicUrl(filePath)
 
-      setPublicUrl(publicUrl) 
+    setPublicUrl(publicUrl)
 
-      if (onChange) {
-        onChange(publicUrl)
-      }
-
+    if (onChange) {
+      onChange(publicUrl)
+    }
 
     setUploading(false)
   }

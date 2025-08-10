@@ -10,14 +10,18 @@ type UserRoles = 'Administrador' | 'Profesor' | 'Estudiante' | 'Usuario'
 
 const renderRole = (role: number): UserRoles => {
   switch (role) {
-    case 1: return 'Administrador'
-    case 2: return 'Profesor'
-    case 3: return 'Estudiante'
-    default: return 'Usuario'
+    case 1:
+      return 'Administrador'
+    case 2:
+      return 'Profesor'
+    case 3:
+      return 'Estudiante'
+    default:
+      return 'Usuario'
   }
 }
 
-export const getUserQuery = (uuid: string) => {
+export const useUserQuery = (uuid: string) => {
   return useQuery({
     queryKey: ["user", uuid],
     queryFn: (): Promise<UserDto[]> => fetchUser(uuid),
@@ -39,7 +43,9 @@ export function useSession() {
       }
     })
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setCurrentSession(session)
       setLoading(false)
       if (session?.access_token) {
@@ -50,7 +56,7 @@ export function useSession() {
     return () => subscription.unsubscribe()
   }, [])
 
-  const { data, isLoading: roleLoading } = getUserQuery(jwt?.sub ?? '')
+  const { data, isLoading: roleLoading } = useUserQuery(jwt?.sub ?? '')
   const role: UserRoles = renderRole(data?.[0]?.id_role ?? 0)
   const name: string = data?.[0].first_name + ' ' + (data?.[0].surname || '')
 
@@ -61,6 +67,6 @@ export function useSession() {
     role,
     name,
     user_id: data?.[0].id_user,
-    loading: loading || roleLoading
+    loading: loading || roleLoading,
   }
 }

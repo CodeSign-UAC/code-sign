@@ -10,7 +10,7 @@ export const Route = createFileRoute('/app/_layout/home')({
   component: DashboardPage,
 })
 
-export function getUserResourcesQuery(userId: number) {
+function useUserResourcesQuery(userId: number) {
   return useQuery({
     queryKey: ['resources', userId],
     queryFn: (): Promise<MstResource[]> => fetchUserResources(userId),
@@ -20,7 +20,7 @@ export function getUserResourcesQuery(userId: number) {
 
 function DashboardPage(): React.JSX.Element {
   const { user_id } = useAuth()
-  const { data, isLoading } = getUserResourcesQuery(user_id ?? 0)
+  const { data, isLoading } = useUserResourcesQuery(user_id ?? 0)
 
   return (
     <div className="space-y-4">

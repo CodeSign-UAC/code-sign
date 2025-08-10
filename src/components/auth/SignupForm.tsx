@@ -18,7 +18,7 @@ interface SignupFormProps {
 }
 
 export function SignupForm({
-  onSuccess,
+  onSuccess: _onSuccess,
   onError,
 }: SignupFormProps): JSX.Element {
   const [isLoading, setIsLoading] = useState<boolean>(false)

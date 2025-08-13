@@ -21,11 +21,11 @@ import {
 import { categoryValue } from '@/modules/resource/resource.util'
 import { useEffect, useState } from 'react'
 
-const currentCategories = 3
+const currentCategories = 4
 
 const categoryOptions = Array.from({ length: currentCategories }, (_, i) => ({
-  value: String(i),
-  label: categoryValue[i],
+  value: String(i + 1),
+  label: categoryValue[i + 1],
 }))
 
 interface Props {

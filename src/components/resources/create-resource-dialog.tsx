@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Dialog,
   DialogContent,
@@ -18,43 +20,43 @@ import { SingleFileUpload } from '../utils/SingleFileUpload'
 import { createResource } from '@/modules/resource/resource.service'
 import type { MstResource } from '@/modules/resource/resource.model'
 import { toast } from 'sonner'
+import {
+  createResourceSchema,
+  type CreateResourceForm,
+} from '@/modules/resource/resource.schema'
+import { Alert, AlertDescription } from '../ui/alert'
 
 export default function CreateResourceDialog() {
-  interface dataModel {
-    id_category: number
-    title: string
-    file_url: string
-    short_description: string
-    description: string
-  }
-
   const [open, setOpen] = useState(false)
-  const [data, setData] = useState<dataModel>({
-    id_category: 0,
-    title: '',
-    file_url: '',
-    short_description: '',
-    description: '',
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+    reset,
+  } = useForm<CreateResourceForm>({
+    resolver: zodResolver(createResourceSchema),
+    defaultValues: {
+      id_category: 0,
+      title: '',
+      file_url: '',
+      short_description: '',
+      description: '',
+    },
   })
 
-  const setDynamicData = (field: keyof dataModel, value: string | number) => {
-    setData((prev) => ({ ...prev, [field]: value }))
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-
+  const onSubmit = async (data: CreateResourceForm) => {
     try {
-      if (!data) return
       const resource = await createResource(data as unknown as MstResource)
-
       if (resource) {
         toast.success('Recurso creado exitosamente')
         setOpen(false)
+        reset()
       }
-    } catch (error) {
+    } catch (err) {
       toast.error('Error al crear recurso')
-      console.error('Error al crear recurso:', error)
+      console.error(err)
     }
   }
 
@@ -66,48 +68,72 @@ export default function CreateResourceDialog() {
           Nuevo Recurso
         </Button>
       </DialogTrigger>
-      <DialogContent>
+
+      <DialogContent className="max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Crear nuevo recurso</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="grid gap-2">
             <Label htmlFor="title">Título</Label>
-            <Input
-              id="title"
-              placeholder="Título del recurso"
-              value={data?.title}
-              onChange={(e) => setDynamicData('title', e.target.value)}
-              required
-            />
+            <Input id="title" {...register('title')} />
           </div>
+          {errors.title && (
+            <Alert className="bg-red-100" variant="destructive">
+              <AlertDescription>{errors.title.message}</AlertDescription>
+            </Alert>
+          )}
 
           <div className="grid gap-2">
             <Label htmlFor="short_description">Descripción Corta</Label>
             <TextArea
               id="short_description"
-              placeholder="Descripción corta del recurso"
-              className="min-h-14"
-              value={data?.short_description}
-              onChange={(e) =>
-                setDynamicData('short_description', e.target.value)
-              }
-              maxLength={120}
-              required
+              {...register('short_description')}
             />
+            {errors.short_description && (
+              <Alert className="bg-red-100" variant="destructive">
+                <AlertDescription>
+                  {errors.short_description.message}
+                </AlertDescription>
+              </Alert>
+            )}
           </div>
+
           <ResourceTypeCombobox
-            onChange={(value) => setDynamicData('id_category', Number(value))}
+            onChange={(value) =>
+              setValue('id_category', Number(value), { shouldValidate: true })
+            }
           />
+          {errors.id_category && (
+            <Alert className="bg-red-100" variant="destructive">
+              <AlertDescription>{errors.id_category.message}</AlertDescription>
+            </Alert>
+          )}
+
           <RichTextEditor
             placeholder="Descripción completa del recurso"
-            onChange={(value) => setDynamicData('description', value)}
+            onChange={(value) =>
+              setValue('description', value, { shouldValidate: true })
+            }
           />
+          {errors.description && (
+            <Alert className="bg-red-100" variant="destructive">
+              <AlertDescription>{errors.description.message}</AlertDescription>
+            </Alert>
+          )}
+
           <SingleFileUpload
             name="file_url"
-            onChange={(value) => setDynamicData('file_url', value)}
+            onChange={(value) =>
+              setValue('file_url', value, { shouldValidate: true })
+            }
           />
+          {errors.file_url && (
+            <Alert className="bg-red-100" variant="destructive">
+              <AlertDescription>{errors.file_url.message}</AlertDescription>
+            </Alert>
+          )}
           <DialogFooter className="mt-6">
             <Button type="submit">Aceptar</Button>
             <Button

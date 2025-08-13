@@ -1,15 +1,15 @@
 import { FileTextIcon, GraduationCap, NotebookPen, Video } from 'lucide-react'
 
 export const categoryValue: Record<number, string> = {
-  [0]: 'Video',
-  [1]: 'Documento',
-  [2]: 'Asignación',
-  [3]: 'Tutorial',
+  [1]: 'Video',
+  [2]: 'Documento',
+  [3]: 'Asignación',
+  [4]: 'Tutorial',
 }
 
 export const categoryIcon: Record<number, React.ReactNode> = {
-  [0]: <Video />,
-  [1]: <FileTextIcon />,
-  [2]: <NotebookPen />,
-  [3]: <GraduationCap />,
+  [1]: <Video />,
+  [2]: <FileTextIcon />,
+  [3]: <NotebookPen />,
+  [4]: <GraduationCap />,
 }

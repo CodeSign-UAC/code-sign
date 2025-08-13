@@ -2,7 +2,7 @@ import { Outlet, createFileRoute } from '@tanstack/react-router'
 import { AppSidebar, Header } from '@/core/layout'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { AuthProvider } from '@/modules/auth/auth.provider'
-import { Toaster } from 'sonner'
+import { Toaster } from '@/components/ui/sonner'
 
 export const Route = createFileRoute('/app/_layout')({
   component: AppLayout,

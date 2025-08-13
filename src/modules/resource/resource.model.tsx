@@ -5,6 +5,7 @@ export interface MstResource extends TableRecord {
   id_category: number
   title: string
   short_description: string
+  has_completed?: boolean | null
   description: string
   file_url?: string
 }

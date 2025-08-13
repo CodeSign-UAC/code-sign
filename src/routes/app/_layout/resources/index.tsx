@@ -1,22 +1,11 @@
+import CreateResourceDialog from '@/components/resources/create-resource-dialog'
 import ListResources from '@/components/resources/list-resources'
-import { Button } from '@/components/ui/button'
 import { useUserResourcesQuery } from '@/core/hooks/use-user-resources'
 import { useAuth } from '@/modules/auth/auth.provider'
 import type { MstResource } from '@/modules/resource/resource.model'
 import { fetchAllResources } from '@/modules/resource/resource.service'
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
-// import { PlusIcon } from 'lucide-react'
-// import * as Dialog from '@radix-ui/react-dialog'
-// import type { JSX } from 'react/jsx-runtime'
-// import type { Resource } from '@/core/models'
-// import { supabase } from '@/lib/supabaseClient'
-// import ResourceCard from '@/components/card/resource-card'
-// import { Button } from '@/components/ui/button'
-// import { Input } from '@/components/ui/input'
-// import { TextArea } from '@/components/ui/textArea'
-// import { resourceCategories } from '@/modules/models/resource.model'
-// import { SingleFileUpload } from '@/components/utils/SingleFileUpload'
 
 export const Route = createFileRoute('/app/_layout/resources/')({
   component: ResourcePage,
@@ -72,7 +61,7 @@ export default function ResourcePage(): React.JSX.Element {
           resources={resources.data}
           isLoading={resources.isLoading}
         >
-          <Button>Agregar Recurso</Button>
+          <CreateResourceDialog />
         </ListResources>
       </section>
     </div>

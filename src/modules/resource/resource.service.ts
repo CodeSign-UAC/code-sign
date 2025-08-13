@@ -52,6 +52,26 @@ export const fetchAllResources = async (): Promise<MstResource[]> => {
   }
 }
 
+export const createResource = async (
+  data: MstResource,
+): Promise<{ v_id_resource: number } | null> => {
+  try {
+    const { data: resource, error } = await supabase.rpc('create_resource', {
+      ...data,
+    })
+
+    if (error) {
+      console.error('Error al crear recurso:', rcpError(error))
+      throw error
+    }
+
+    return resource
+  } catch (err) {
+    console.error('Error inesperado en createResource:', err)
+    throw err
+  }
+}
+
 export const fetchResourceByIdWithUserStatus = async (
   id: number,
   userId: number,

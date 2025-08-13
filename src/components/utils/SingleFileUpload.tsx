@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { UploadCloudIcon } from 'lucide-react'
+import { FileIcon, UploadCloudIcon } from 'lucide-react'
 import { supabase } from '@/lib/supabaseClient'
+import { Link } from '@tanstack/react-router'
 
 interface Props {
   name: string
@@ -11,7 +12,7 @@ interface Props {
 export function SingleFileUpload({ name, value, onChange }: Props) {
   const [fileName, setFileName] = useState('')
   const [uploading, setUploading] = useState(false)
-  const [_currentPublicUrl, setPublicUrl] = useState('')
+  const [currentPublicUrl, setPublicUrl] = useState('')
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
@@ -24,7 +25,7 @@ export function SingleFileUpload({ name, value, onChange }: Props) {
     const filePath = `uploads/${Date.now()}_${file.name}`
 
     const { error } = await supabase.storage
-      .from('resources')
+      .from('public_resources')
       .upload(filePath, file)
 
     if (error) {
@@ -36,7 +37,7 @@ export function SingleFileUpload({ name, value, onChange }: Props) {
 
     const {
       data: { publicUrl },
-    } = supabase.storage.from('tu-bucket').getPublicUrl(filePath)
+    } = supabase.storage.from('public_resources').getPublicUrl(filePath)
 
     setPublicUrl(publicUrl)
 
@@ -48,21 +49,35 @@ export function SingleFileUpload({ name, value, onChange }: Props) {
   }
 
   return (
-    <div className="max-w-md bg-white rounded-xl shadow-md text-center">
-      <label className="cursor-pointer flex flex-col h-32 justify-center items-center gap-2 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-gray-500 transition">
-        <input
-          type="file"
-          name={name}
-          onChange={handleFileChange}
-          className="hidden"
-        />
-        <UploadCloudIcon />
-        <span className="text-sm text-gray-600">
-          {uploading ? 'Subiendo...' : 'Haz clic o arrastra un archivo aquí'}
-        </span>
-      </label>
+    <div className="max-w-md bg-white rounded-xl text-center">
+      {!currentPublicUrl ? (
+        <label className="cursor-pointer flex flex-col h-32 active:scale-95 justify-center items-center gap-2 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-gray-400 transition">
+          <input
+            type="file"
+            name={name}
+            onChange={handleFileChange}
+            className="hidden"
+          />
+          <UploadCloudIcon />
+          <span className="text-sm text-gray-600">
+            {uploading ? 'Subiendo...' : 'Haz clic o arrastra un archivo aquí'}
+          </span>
+        </label>
+      ) : (
+        <div className="flex flex-col gap-2">
+          <p className="font-semibold text-blue-900">
+            Archivo Subido Exitosamente
+          </p>
+          <div className="bg-blue-50 flex flex-col p-4 rounded-xl text-blue-600 justify-center items-center py-8">
+            <FileIcon />
+            <Link target="_blank" to={currentPublicUrl}>
+              {fileName}
+            </Link>
+          </div>
+        </div>
+      )}
 
-      {fileName && (
+      {fileName && !currentPublicUrl && (
         <div className="mt-4 text-sm text-gray-700">
           Archivo seleccionado: <strong>{fileName}</strong>
         </div>

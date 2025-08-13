@@ -12,6 +12,18 @@ import { InfoIcon, LucideDownload, LucideFile, XCircle } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Skeleton } from '@/components/ui/skeleton'
 import DeleteResourceDialog from '@/components/resources/delete-resource-dialog'
+import {
+  VideoPlayer,
+  VideoPlayerContent,
+  VideoPlayerControlBar,
+  VideoPlayerMuteButton,
+  VideoPlayerPlayButton,
+  VideoPlayerSeekBackwardButton,
+  VideoPlayerSeekForwardButton,
+  VideoPlayerTimeDisplay,
+  VideoPlayerTimeRange,
+  VideoPlayerVolumeRange,
+} from '@/components/ui/shadcn-io/video-player'
 
 export const Route = createFileRoute('/app/_layout/resources/$id')({
   component: RouteComponent,
@@ -130,11 +142,24 @@ function RouteComponent() {
                   />
                 ),
                 video: (
-                  <video
-                    src={resource?.file_url}
-                    controls
-                    className="w-full h-full rounded-xl aspect-video"
-                  />
+                  <VideoPlayer className="overflow-hidden rounded-xl aspect-video w-full">
+                    <VideoPlayerContent
+                      crossOrigin=""
+                      muted
+                      preload="auto"
+                      slot="media"
+                      src={resource?.file_url}
+                    />
+                    <VideoPlayerControlBar>
+                      <VideoPlayerPlayButton />
+                      <VideoPlayerSeekBackwardButton />
+                      <VideoPlayerSeekForwardButton />
+                      <VideoPlayerTimeRange />
+                      <VideoPlayerTimeDisplay showDuration />
+                      <VideoPlayerMuteButton />
+                      <VideoPlayerVolumeRange />
+                    </VideoPlayerControlBar>
+                  </VideoPlayer>
                 ),
                 pdf: (
                   <iframe

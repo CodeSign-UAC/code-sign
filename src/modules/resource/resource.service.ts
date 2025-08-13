@@ -52,6 +52,24 @@ export const fetchAllResources = async (): Promise<MstResource[]> => {
   }
 }
 
+export const deleteResource = async (id: number): Promise<boolean> => {
+  try {
+    const { data, error } = await supabase.rpc('delete_resource', {
+      p_id_resource: id,
+    })
+
+    if (error) {
+      console.error('Error al eliminar recurso:', rcpError(error))
+      throw error
+    }
+
+    return data
+  } catch (err) {
+    console.error('Error inesperado en deleteResource:', err)
+    throw err
+  }
+}
+
 export const createResource = async (
   data: MstResource,
 ): Promise<{ v_id_resource: number } | null> => {

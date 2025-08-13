@@ -8,9 +8,10 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { categoryIcon, categoryValue } from '@/modules/resource/resource.util'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { InfoIcon, LucideDownload, LucideFile } from 'lucide-react'
+import { InfoIcon, LucideDownload, LucideFile, XCircle } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Skeleton } from '@/components/ui/skeleton'
+import DeleteResourceDialog from '@/components/resources/delete-resource-dialog'
 
 export const Route = createFileRoute('/app/_layout/resources/$id')({
   component: RouteComponent,
@@ -41,7 +42,6 @@ function RouteComponent() {
       }
 
       const data = await fetchResourceByIdWithUserStatus(Number(id), user_id)
-      console.log(data)
       if (!data) {
         console.error('Resource not found or inaccessible:', id)
         notFound()
@@ -87,9 +87,10 @@ function RouteComponent() {
           contentType,
           contentLength,
         })
-        setIsLoading(false)
       } catch (error) {
         console.error('Error fetching file info:', error)
+      } finally {
+        setIsLoading(false)
       }
     }
 
@@ -155,6 +156,12 @@ function RouteComponent() {
                   </div>
                 ),
               }[fileData.type]}
+            {!fileData && !isLoading && (
+              <div className="flex flex-col gap-2 justify-center items-center my-16 text-center text-gray-500">
+                <XCircle />
+                <p>No se encontró información del archivo.</p>
+              </div>
+            )}
           </div>
         )}
 
@@ -203,7 +210,12 @@ function RouteComponent() {
                 {resource && resource?.has_completed == null && (
                   <Button variant="secondary">Unirme al seguimiento</Button>
                 )}
-                <Button variant="secondary">Eliminar</Button>
+                <DeleteResourceDialog
+                  makeRedirect={() => {
+                    window.location.href = '/app/resources'
+                  }}
+                  id={resource?.id_resource || 0}
+                />
                 <Button variant="outline">Modificar</Button>
               </CardFooter>
             </>

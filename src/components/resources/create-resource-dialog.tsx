@@ -28,6 +28,7 @@ import { Alert, AlertDescription } from '../ui/alert'
 
 export default function CreateResourceDialog() {
   const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const {
     register,
@@ -48,6 +49,7 @@ export default function CreateResourceDialog() {
 
   const onSubmit = async (data: CreateResourceForm) => {
     try {
+      setLoading(true)
       const resource = await createResource(data as unknown as MstResource)
       if (resource) {
         toast.success('Recurso creado exitosamente')
@@ -57,6 +59,8 @@ export default function CreateResourceDialog() {
     } catch (err) {
       toast.error('Error al crear recurso')
       console.error(err)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -135,7 +139,9 @@ export default function CreateResourceDialog() {
             </Alert>
           )}
           <DialogFooter className="mt-6">
-            <Button type="submit">Aceptar</Button>
+            <Button disabled={loading} type="submit">
+              Aceptar
+            </Button>
             <Button
               type="button"
               variant="outline"

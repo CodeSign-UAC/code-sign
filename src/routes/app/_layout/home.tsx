@@ -1,22 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
-import { fetchUserResources } from '@/modules/resource/resource.service'
 import { useAuth } from '@/modules/auth/auth.provider'
-import type { MstResource } from '@/modules/resource/resource.model'
 import Stats from '@/components/home/stats'
 import HomeResources from '@/components/home/home-resources'
+import { useUserResourcesQuery } from '@/core/hooks/use-user-resources'
 
 export const Route = createFileRoute('/app/_layout/home')({
   component: DashboardPage,
 })
-
-function useUserResourcesQuery(userId: number) {
-  return useQuery({
-    queryKey: ['resources', userId],
-    queryFn: (): Promise<MstResource[]> => fetchUserResources(userId),
-    enabled: !!userId,
-  })
-}
 
 function DashboardPage(): React.JSX.Element {
   const { user_id } = useAuth()
@@ -25,16 +15,10 @@ function DashboardPage(): React.JSX.Element {
   return (
     <div className="space-y-4">
       <section>
-        <Stats
-          resources={data}
-          isLoading={isLoading}
-        />
+        <Stats resources={data} isLoading={isLoading} />
       </section>
       <section>
-        <HomeResources
-          resources={data}
-          isLoading={isLoading}
-        />
+        <HomeResources resources={data} isLoading={isLoading} />
       </section>
     </div>
   )

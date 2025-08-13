@@ -15,9 +15,14 @@ export const createResourceSchema = z.object({
   file_url: z.url({
     error: 'Debe subir un archivo para poder continuar',
   }),
-  short_description: z.string().min(32).max(120, {
-    error: 'La descripción corta debe tener entre 32 y 120 caracteres',
-  }),
+  short_description: z
+    .string()
+    .min(32, {
+      error: 'La descripción corta debe tener al menos 32 caracteres',
+    })
+    .max(120, {
+      error: 'La descripción corta debe tener máximo 120 caracteres',
+    }),
   description: z.string().min(64, {
     error: 'La descripción debe tener al menos 64 caracteres',
   }),

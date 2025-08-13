@@ -69,7 +69,7 @@ export default function CreateResourceDialog() {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="max-h-[85vh] overflow-y-auto">
+      <DialogContent className="max-h-[85vh] overflow-y-auto ">
         <DialogHeader>
           <DialogTitle>Crear nuevo recurso</DialogTitle>
         </DialogHeader>

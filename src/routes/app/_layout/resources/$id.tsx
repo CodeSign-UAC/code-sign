@@ -4,7 +4,7 @@ import { fetchResourceByIdWithUserStatus } from '@/modules/resource/resource.ser
 import { createFileRoute, Link, notFound } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { useParams } from '@tanstack/react-router'
-import { Card, CardFooter, CardHeader } from '@/components/ui/card'
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { categoryIcon, categoryValue } from '@/modules/resource/resource.util'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -116,7 +116,7 @@ function RouteComponent() {
       )}
       <section className="grid lg:grid-cols-3 gap-4">
         {isLoading ? (
-          <Skeleton className="lg:col-span-2"></Skeleton>
+          <Skeleton className="lg:col-span-2 aspect-video"></Skeleton>
         ) : (
           <div className="bg-gray-100 w-full h-auto rounded-xl lg:col-span-2 flex items-center justify-center overflow-hidden">
             {fileData &&
@@ -160,40 +160,63 @@ function RouteComponent() {
 
         <Card className="h-fit w-full lg:w-auto p-4">
           <CardHeader className="p-0">
-            <h2 className="text-xl font-semibold leading-none">
-              Detalles del Recurso
-            </h2>
-            <p className="text-sm">{resource?.short_description}</p>
-            <ul className="flex flex-col gap-4 mt-2">
-              {resource?.id_category && (
-                <li className="flex gap-2">
-                  {categoryIcon[resource?.id_category]}
-                  <span>{categoryValue[resource?.id_category]}</span>
-                </li>
-              )}
-              {resource?.has_completed != null && (
-                <li>
-                  <Badge
-                    variant={resource.has_completed ? 'default' : 'destructive'}
-                  >
-                    {resource.has_completed ? 'Completado' : 'No completado'}
-                  </Badge>
-                </li>
-              )}
-            </ul>
-          </CardHeader>
-          <CardFooter className="flex justify-end gap-2 p-0 flex-wrap">
-            {resource && resource?.has_completed == null && (
-              <Button variant="secondary">Unirme al seguimiento</Button>
+            {isLoading ? (
+              <>
+                <Skeleton className="h-5 w-3/4" />
+                <Skeleton className="h-3 w-full" />
+              </>
+            ) : (
+              <>
+                <h2 className="text-xl font-semibold leading-none">
+                  Detalles del Recurso
+                </h2>
+                <p className="text-sm">{resource?.short_description}</p>
+              </>
             )}
-            <Button variant="secondary">Eliminar</Button>
-            <Button variant="outline">Modificar</Button>
-          </CardFooter>
+          </CardHeader>
+          {!isLoading && (
+            <>
+              <CardContent className="p-0">
+                <ul className="flex flex-col gap-4 mt-2">
+                  {resource?.id_category && (
+                    <li className="flex gap-2">
+                      {categoryIcon[resource?.id_category]}
+                      <span>{categoryValue[resource?.id_category]}</span>
+                    </li>
+                  )}
+                  {resource?.has_completed != null && (
+                    <li>
+                      <Badge
+                        variant={
+                          resource.has_completed ? 'default' : 'destructive'
+                        }
+                      >
+                        {resource.has_completed
+                          ? 'Completado'
+                          : 'No completado'}
+                      </Badge>
+                    </li>
+                  )}
+                </ul>
+              </CardContent>
+              <CardFooter className="flex justify-end gap-2 p-0 flex-wrap">
+                {resource && resource?.has_completed == null && (
+                  <Button variant="secondary">Unirme al seguimiento</Button>
+                )}
+                <Button variant="secondary">Eliminar</Button>
+                <Button variant="outline">Modificar</Button>
+              </CardFooter>
+            </>
+          )}
         </Card>
       </section>
-      <section>
+      <section className="space-y-8">
         {isLoading ? (
-          <Skeleton className="lg:col-span-2"></Skeleton>
+          <>
+            <Skeleton className="w-full h-8 mb-2"></Skeleton>
+            <Skeleton className="w-full h-4 mb-2"></Skeleton>
+            <Skeleton className="w-1/2 h-4 mb-2"></Skeleton>
+          </>
         ) : (
           <div
             className="prose"

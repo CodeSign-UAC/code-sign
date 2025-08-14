@@ -30,11 +30,17 @@ const categoryOptions = Array.from({ length: currentCategories }, (_, i) => ({
 
 interface Props {
   onChange: (value: string) => void
+  defaultValue?: string
 }
 
-export default function ResourceTypeCombobox({ onChange }: Props) {
+export default function ResourceTypeCombobox({ onChange, defaultValue }: Props) {
   const [open, setOpen] = useState(false)
-  const [value, setValue] = useState('')
+  const [value, setValue] = useState(defaultValue || '') 
+
+
+  useEffect(() => {
+    setValue(defaultValue || '') 
+  }, [defaultValue])
 
   useEffect(() => {
     onChange(value)

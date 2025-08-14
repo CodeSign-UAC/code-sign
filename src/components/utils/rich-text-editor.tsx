@@ -35,6 +35,13 @@ export default function RichTextEditor({
     onUpdate: () => setSelection(selection + 1),
   })
 
+useEffect(() => {
+  if (editor && value !== undefined && value !== editor.getHTML()) {
+    editor.commands.setContent(value) 
+  }
+}, [value, editor])
+
+
   useEffect(() => {
     if (editor) {
       editor.on('update', () => {

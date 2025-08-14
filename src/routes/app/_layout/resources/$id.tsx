@@ -12,6 +12,7 @@ import { InfoIcon, LucideDownload, LucideFile, XCircle } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Skeleton } from '@/components/ui/skeleton'
 import DeleteResourceDialog from '@/components/resources/delete-resource-dialog'
+import UpdateResourceDialog from '@/components/resources/update-resource-dialog'
 import {
   VideoPlayer,
   VideoPlayerContent,
@@ -241,7 +242,10 @@ function RouteComponent() {
                   }}
                   id={resource?.id_resource || 0}
                 />
-                <Button variant="outline">Modificar</Button>
+                <UpdateResourceDialog
+                  resource={resource}
+                  onClose={() => window.location.href = '/app/resources'}
+                />
               </CardFooter>
             </>
           )}

@@ -36,13 +36,13 @@ export default function ListResources({
     const lowerCaseSearchTerm: string = searchTerm.toLowerCase()
 
     return resources.length
-      ? resources.filter(
-          ({ title, description }) =>
-            title.toLowerCase().includes(lowerCaseSearchTerm) ||
-            description.toLowerCase().includes(lowerCaseSearchTerm),
-        )
-      : []
-  }, [searchTerm, isLoading])
+    ? resources.filter(
+        ({ title, description }) =>
+          (title ?? "").toLowerCase().includes(lowerCaseSearchTerm) ||
+          (description ?? "").toLowerCase().includes(lowerCaseSearchTerm),
+      )
+    : []
+    }, [searchTerm, isLoading])
 
   return (
     <Card>

@@ -13,6 +13,8 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Skeleton } from '@/components/ui/skeleton'
 import DeleteResourceDialog from '@/components/resources/delete-resource-dialog'
 import UpdateResourceDialog from '@/components/resources/update-resource-dialog'
+import TrackResourceDialog from '@/components/resources/track-resource-dialog'
+import { supabase } from '@/lib/supabaseClient'
 import {
   VideoPlayer,
   VideoPlayerContent,
@@ -38,8 +40,35 @@ function RouteComponent() {
     contentType: string | null
     contentLength: string | null
   }>()
+
+  const [userUUID, setUserUUID] = useState<string | null>(null)
+
   const { user_id } = useAuth()
   const { id } = useParams({ from: '/app/_layout/resources/$id' })
+
+    const fetchUserUUID = async (userIdNumber: number): Promise<string | null> => {
+    const { data, error } = await supabase
+  .from('mst_user')
+  .select('id_user') 
+  .eq('user_number', userIdNumber) 
+  .single()
+
+    if (error) {
+      console.error('Error fetching user UUID:', error)
+      return null
+    }
+
+    return data?.id_user || null
+  }
+
+  // Obtenemos UUID cuando tenemos user_id
+  useEffect(() => {
+    if (!user_id) return
+
+    fetchUserUUID(user_id).then(uuid => setUserUUID(uuid))
+  }, [user_id])
+
+
 
   useEffect(() => {
     const fetchResource = async () => {
@@ -233,8 +262,12 @@ function RouteComponent() {
                 </ul>
               </CardContent>
               <CardFooter className="flex justify-end gap-2 p-0 flex-wrap">
-                {resource && resource?.has_completed == null && (
-                  <Button variant="secondary">Unirme al seguimiento</Button>
+                {user_id !== undefined && resource && resource.has_completed == null && (
+                  <TrackResourceDialog
+                    userIdNumber={user_id} 
+                    resourceId={resource.id_resource} 
+                    onSuccess={() => window.location.reload()}
+                  />
                 )}
                 <DeleteResourceDialog
                   makeRedirect={() => {

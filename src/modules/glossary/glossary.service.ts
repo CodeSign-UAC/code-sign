@@ -17,8 +17,9 @@ const fetchTopicGlossaries = async (): Promise<TopicGlossariesDto[]> => {
 
     if (!data || data.length === 0)
       console.warn(`No se encontraron glosarios para los temas.`)
-
-    return data || null
+    return []
+  }
+    return data
   } catch (err) {
     console.error('Error inesperado en get_topics_with_glossaries:', err)
     throw err

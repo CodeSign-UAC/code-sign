@@ -1,17 +1,22 @@
 import { supabase } from "@/lib/supabaseClient"
-import type { TopicGlossariesDto } from "./glossary.model"
+import type { InsertGlossaryDto, TopicGlossariesDto } from "./glossary.model"
+import type { PostgrestError } from "@supabase/supabase-js"
+
+const rcpError = (error: PostgrestError) => {
+  return {
+    message: error.message,
+    details: error.details,
+    hint: error.hint,
+    code: error.code,
+  }
+}
 
 const fetchTopicGlossaries = async (): Promise<TopicGlossariesDto[]> => {
   try {
     const { data, error } = await supabase.rpc('get_topics_with_glossaries')
 
     if (error) {
-      console.error('RPC Error:', {
-        message: error.message,
-        details: error.details,
-        hint: error.hint,
-        code: error.code
-      })
+      console.error('RPC Error:', rcpError(error))
       throw error
     }
 
@@ -25,6 +30,21 @@ const fetchTopicGlossaries = async (): Promise<TopicGlossariesDto[]> => {
   }
 }
 
+const createGlossaryTerm = async (glossary: InsertGlossaryDto): Promise<void> => {
+  try {
+    const { error } = await supabase.rpc('create_glossary_term', glossary)
+
+    if (error) {
+      console.error('RPC Error:', rcpError(error))
+      throw error
+    }
+  } catch (err) {
+    console.error('Error inesperado en create_glossary_term:', err)
+    throw err
+  }
+}
+
 export {
-  fetchTopicGlossaries
+  fetchTopicGlossaries,
+  createGlossaryTerm
 }

@@ -10,4 +10,4 @@ export interface MstUser extends TableRecord {
 }
 
 // DTO para la obtención del rol y el nombre del usuario (GET)
-export interface UserDto extends Pick<MstUser, 'id_user' | 'id_role' | 'first_name' | 'surname'> { }
+export type UserDto = Pick<MstUser, 'id_user' | 'id_role' | 'first_name' | 'surname'>

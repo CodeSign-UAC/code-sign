@@ -25,7 +25,7 @@ export default function GlossaryActions({ glossary }: Props): React.JSX.Element 
         <CreateGlossary id_topic={glossary.id_topic} />
         <DialogFooter>
           <Button type="submit" form="create-glossary-form">Añadir término</Button>
-          <DialogClose>
+          <DialogClose asChild>
             <Button variant="outline">
               Cancelar
             </Button>

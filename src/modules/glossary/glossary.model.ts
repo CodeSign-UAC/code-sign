@@ -15,3 +15,19 @@ export interface MstGlossary extends TableRecord {
 export interface TopicGlossariesDto extends CatTopic {
   glossaries: MstGlossary[]
 }
+
+export interface InsertGlossaryDto {
+  p_id_topic: number
+  p_term: string
+  p_description: string
+  p_video_url: string | null
+}
+
+export interface InsertTopicDto {
+  p_topic: string
+}
+
+export interface GetTopicDto {
+  p_id_topic: number
+  p_topic: string
+}

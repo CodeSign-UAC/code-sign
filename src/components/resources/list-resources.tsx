@@ -16,40 +16,45 @@ import { Badge } from '../ui/badge'
 import { Link } from '@tanstack/react-router'
 
 interface Props {
+  title?: string
+  description?: string
   resources: MstResource[] | undefined
   isLoading: boolean
+  children?: React.ReactNode
 }
 
-export default function ResourceSection({
+export default function ListResources({
   resources = [],
   isLoading,
+  title = 'Recursos',
+  description = 'Accede a una lista de recursos útiles para tu aprendizaje.',
+  children,
 }: Props): React.JSX.Element {
   const [searchTerm, setSearchTerm] = useState<string>('')
 
   const filteredResources: MstResource[] = useMemo(() => {
-  const lowerCaseSearchTerm: string = searchTerm.toLowerCase()
+    const lowerCaseSearchTerm: string = searchTerm.toLowerCase()
 
-  return resources.length
-    ? resources
-        .filter(({ status }) => status !== 3) 
-        .filter(
-          ({ title, short_description }) =>
-            title.toLowerCase().includes(lowerCaseSearchTerm) ||
-            (short_description ?? '').toLowerCase().includes(lowerCaseSearchTerm),
-        )
+    return resources.length
+    ? resources.filter(
+        ({ title, description }) =>
+          (title ?? "").toLowerCase().includes(lowerCaseSearchTerm) ||
+          (description ?? "").toLowerCase().includes(lowerCaseSearchTerm),
+      )
     : []
-}, [searchTerm, isLoading])
+    }, [searchTerm, isLoading])
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <BookOpen size={32} />
-          <h2 className="text-xl font-semibold">Recursos</h2>
+        <CardTitle className="flex justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <BookOpen size={32} />
+            <h2 className="text-xl font-semibold">{title}</h2>
+          </div>
+          {children}
         </CardTitle>
-        <CardDescription>
-          Accede a una lista de recursos útiles para tu aprendizaje.
-        </CardDescription>
+        <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="relative">
@@ -63,16 +68,16 @@ export default function ResourceSection({
         <div className={`space-y-4 ${isLoading && 'space-y-8'}`}>
           {isLoading
             ? Array.from({ length: 2 }).map(
-              (_, index: number): React.JSX.Element => (
-                <div key={index} className="flex flex-col space-y-4">
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-full" />
-                  <div>
-                    <Skeleton className="h-8 w-[100px]" />
+                (_, index: number): React.JSX.Element => (
+                  <div key={index} className="flex flex-col space-y-4">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-full" />
+                    <div>
+                      <Skeleton className="h-8 w-[100px]" />
+                    </div>
                   </div>
-                </div>
-              ),
-            )
+                ),
+              )
             : renderResources(filteredResources)}
         </div>
       </CardContent>
@@ -110,8 +115,9 @@ const renderResources = (resources: Array<MstResource>) => {
             </CardDescription>
             <div className="flex justify-end gap-4 items-center">
               <Button
-                variant="outline"
+                variant={'outline'}
                 className="cursor-pointer max-lg:w-full max-lg:mt-2"
+                onClick={(): void => {}}
                 asChild
               >
                 <Link
@@ -129,4 +135,3 @@ const renderResources = (resources: Array<MstResource>) => {
     ),
   )
 }
-

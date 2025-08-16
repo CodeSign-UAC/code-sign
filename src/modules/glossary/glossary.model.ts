@@ -5,15 +5,21 @@ export interface CatTopic extends TableRecord {
   topic: string
 }
 
+export interface GetTopicDto {
+  p_id_topic: number
+  p_topic: string
+}
+
+export interface InsertTopicDto {
+  p_topic: string
+}
+
 export interface MstGlossary extends TableRecord {
+  id_glossary: number
   id_topic: number
   term: string
   description: string
   video_url: string | null
-}
-
-export interface TopicGlossariesDto extends CatTopic {
-  glossaries: MstGlossary[]
 }
 
 export interface InsertGlossaryDto {
@@ -23,11 +29,8 @@ export interface InsertGlossaryDto {
   p_video_url: string | null
 }
 
-export interface InsertTopicDto {
-  p_topic: string
-}
+export interface UpdateGlossaryDto { p_id_glossary: number }
 
-export interface GetTopicDto {
-  p_id_topic: number
-  p_topic: string
+export interface TopicGlossariesDto extends CatTopic {
+  glossaries: MstGlossary[]
 }

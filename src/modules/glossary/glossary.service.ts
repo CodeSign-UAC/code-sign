@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabaseClient"
-import type { GetTopicDto, InsertGlossaryDto, InsertTopicDto, TopicGlossariesDto } from "./glossary.model"
+import type { GetTopicDto, InsertGlossaryDto, InsertTopicDto, TopicGlossariesDto, UpdateGlossaryDto } from "./glossary.model"
 import type { PostgrestError } from "@supabase/supabase-js"
 
 const rcpError = (error: PostgrestError) => {
@@ -73,6 +73,20 @@ export const insertTopic = async (topic: InsertTopicDto): Promise<void> => {
     }
   } catch (err) {
     console.error('Error inesperado en fetchTopics:', err)
+    throw err
+  }
+}
+
+export const deleteGlossary = async (id: UpdateGlossaryDto): Promise<void> => {
+  try {
+    const { error } = await supabase.rpc('delete_glossary', id)
+
+    if (error) {
+      console.error('RPC Error:', rcpError(error))
+      throw error
+    }
+  } catch (err) {
+    console.error('Error inesperado en deleteGlossary:', err)
     throw err
   }
 }

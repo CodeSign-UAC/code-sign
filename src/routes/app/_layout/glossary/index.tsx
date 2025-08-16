@@ -64,7 +64,7 @@ function RouteComponent(): React.JSX.Element {
                   <AccordionContent className="px-4 pb-4 overflow-hidden">
                     <div className="overflow-x-auto rounded-md border">
                       {topic.glossaries.length > 0 ? (
-                        <GlossaryTable glossaries={topic.glossaries} />
+                        <GlossaryTable glossaries={topic.glossaries} onChanged={refetch} />
                       ) : (
                         <p className="p-4 text-center text-muted-foreground">No hay ningún término para este tema.</p>
                       )}

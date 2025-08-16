@@ -13,6 +13,7 @@ import { categoryIcon, categoryValue } from '@/modules/resource/resource.util'
 import { Skeleton } from '@/components/ui/skeleton'
 import type { MstResource } from '@/modules/resource/resource.model'
 import { Badge } from '../ui/badge'
+import { Link } from '@tanstack/react-router'
 
 interface Props {
   resources: MstResource[] | undefined
@@ -26,16 +27,18 @@ export default function ResourceSection({
   const [searchTerm, setSearchTerm] = useState<string>('')
 
   const filteredResources: MstResource[] = useMemo(() => {
-    const lowerCaseSearchTerm: string = searchTerm.toLowerCase()
+  const lowerCaseSearchTerm: string = searchTerm.toLowerCase()
 
-    return resources.length
-      ? resources.filter(
-        ({ title, description }) =>
-          title.toLowerCase().includes(lowerCaseSearchTerm) ||
-          description.toLowerCase().includes(lowerCaseSearchTerm),
-      )
-      : []
-  }, [searchTerm, isLoading])
+  return resources.length
+    ? resources
+        .filter(({ status }) => status !== 3) 
+        .filter(
+          ({ title, short_description }) =>
+            title.toLowerCase().includes(lowerCaseSearchTerm) ||
+            (short_description ?? '').toLowerCase().includes(lowerCaseSearchTerm),
+        )
+    : []
+}, [searchTerm, isLoading])
 
   return (
     <Card>
@@ -103,18 +106,21 @@ const renderResources = (resources: Array<MstResource>) => {
           </Badge>
           <div className="flex max-lg:flex-col gap-2 lg:items-center lg:justify-between ">
             <CardDescription className="text-start">
-              {resource.description}
+              {resource.short_description}
             </CardDescription>
             <div className="flex justify-end gap-4 items-center">
               <Button
-                variant={'outline'}
+                variant="outline"
                 className="cursor-pointer max-lg:w-full max-lg:mt-2"
-                onClick={(): void => {
-                  console.log(resource.file_url)
-                }}
+                asChild
               >
-                <DoorOpen />
-                Acceder
+                <Link
+                  to="/app/resources/$id"
+                  params={{ id: String(resource.id_resource) }}
+                >
+                  <DoorOpen />
+                  Acceder
+                </Link>
               </Button>
             </div>
           </div>

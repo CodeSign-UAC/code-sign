@@ -26,7 +26,11 @@ import {
 } from '@/modules/resource/resource.schema'
 import { Alert, AlertDescription } from '../ui/alert'
 
-export default function CreateResourceDialog() {
+interface CreateResourceDialogProps {
+  onCreate?: () => void
+}
+
+export default function CreateResourceDialog({ onCreate }: CreateResourceDialogProps) {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
 
@@ -53,6 +57,7 @@ export default function CreateResourceDialog() {
       const resource = await createResource(data as unknown as MstResource)
       if (resource) {
         toast.success('Recurso creado exitosamente')
+        onCreate?.()
         setOpen(false)
         reset()
       }

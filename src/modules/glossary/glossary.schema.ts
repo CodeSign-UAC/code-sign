@@ -9,4 +9,11 @@ export const glossarySchema = z.object({
   video_url: z.string().nullable()
 })
 
+export const topicSchema = z.object({
+  topic: z.string().min(2, {
+    error: "El tema debe tener al menos dos letras"
+  })
+})
+
 export type GlossarySchema = z.infer<typeof glossarySchema>
+export type TopicSchema = z.infer<typeof topicSchema>

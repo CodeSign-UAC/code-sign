@@ -1,10 +1,9 @@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import type { InsertGlossaryDto, TopicGlossariesDto } from "@/modules/glossary/glossary.model"
+import type { InsertGlossaryDto } from "@/modules/glossary/glossary.model"
 import { glossarySchema, type GlossarySchema } from "@/modules/glossary/glossary.schema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Input } from "../ui/input"
-import { Button } from "../ui/button"
 import { TextArea } from "../ui/textArea"
 import { useMutation } from "@tanstack/react-query"
 import { toast } from "sonner"
@@ -25,7 +24,7 @@ export default function CreateGlossary({ id_topic }: Props): React.JSX.Element {
     }
   })
 
-  const { mutate, isPending, isSuccess } = useMutation({
+  const { mutate } = useMutation({
     mutationFn: (data: InsertGlossaryDto) => createGlossaryTerm(data),
     onSuccess: (): void => {
       form.reset()

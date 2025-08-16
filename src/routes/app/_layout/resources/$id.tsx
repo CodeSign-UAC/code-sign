@@ -14,6 +14,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import DeleteResourceDialog from '@/components/resources/delete-resource-dialog'
 import UpdateResourceDialog from '@/components/resources/update-resource-dialog'
 import TrackResourceDialog from '@/components/resources/track-resource-dialog'
+import CompleteResourceButton from '@/components/resources/complete-resource-dialog'
 import { supabase } from '@/lib/supabaseClient'
 import {
   VideoPlayer,
@@ -61,7 +62,6 @@ function RouteComponent() {
     return data?.id_user || null
   }
 
-  // Obtenemos UUID cuando tenemos user_id
   useEffect(() => {
     if (!user_id) return
 
@@ -262,13 +262,22 @@ function RouteComponent() {
                 </ul>
               </CardContent>
               <CardFooter className="flex justify-end gap-2 p-0 flex-wrap">
-                {user_id !== undefined && resource && resource.has_completed == null && (
-                  <TrackResourceDialog
-                    userIdNumber={user_id} 
-                    resourceId={resource.id_resource} 
+                {user_id !== undefined && resource && resource.has_completed !== null && !resource.has_completed && (
+                  <CompleteResourceButton
+                    userId={user_id}
+                    resourceId={resource.id_resource}
                     onSuccess={() => window.location.reload()}
                   />
                 )}
+
+                {user_id !== undefined && resource && resource.has_completed === null && (
+                  <TrackResourceDialog
+                    userIdNumber={user_id}
+                    resourceId={resource.id_resource}
+                    onSuccess={() => window.location.reload()}
+                  />
+                )}
+                
                 <DeleteResourceDialog
                   makeRedirect={() => {
                     window.location.href = '/app/resources'

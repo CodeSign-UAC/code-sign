@@ -15,36 +15,36 @@ export default function ResourcePage(): React.JSX.Element {
   const [resources, setResources] = useState<{
     isLoading: boolean
     data: MstResource[]
-  }>({
-    isLoading: true,
-    data: [],
-  })
-
-  useEffect(() => {
-    const fetchResources = async () => {
-      try {
-        const resources = await fetchAllResources()
-        setResources({
-          isLoading: false,
-          data: resources,
-        })
-      } catch (error) {
-        console.error('Error fetching resources:', error)
-        setResources({
-          isLoading: false,
-          data: [],
-        })
-      }
-    }
-
-    fetchResources()
-  }, [])
+  }>({ isLoading: true, data: [] })
 
   const { user_id } = useAuth()
 
-  const { data: myResourcesData, isLoading } = useUserResourcesQuery(
-    user_id ?? 0,
-  )
+  const {
+    data: myResourcesData,
+    isLoading: isLoadingMyResources,
+    refetch: refetchMyResources,
+  } = useUserResourcesQuery(user_id ?? 0)
+
+
+  const refreshResources = async () => {
+
+    refetchMyResources()
+
+
+    setResources(prev => ({ ...prev, isLoading: true }))
+    try {
+      const allResources = await fetchAllResources()
+      setResources({ isLoading: false, data: allResources })
+    } catch (error) {
+      console.error('Error fetching resources:', error)
+      setResources({ isLoading: false, data: [] })
+    }
+  }
+
+
+  useEffect(() => {
+    refreshResources()
+  }, [])
 
   return (
     <div className="space-y-4">
@@ -52,8 +52,8 @@ export default function ResourcePage(): React.JSX.Element {
         <ListResources
           title="Mis Recursos"
           description="Accede a una lista de recursos que has guardado."
-          resources={myResourcesData}
-          isLoading={isLoading}
+          resources={myResourcesData?.filter(r => r.status !== 3) ?? []}
+          isLoading={isLoadingMyResources}
         />
       </section>
       <section className="mt-8">
@@ -61,7 +61,7 @@ export default function ResourcePage(): React.JSX.Element {
           resources={resources.data}
           isLoading={resources.isLoading}
         >
-          <CreateResourceDialog />
+          <CreateResourceDialog onCreate={refreshResources} />
         </ListResources>
       </section>
     </div>

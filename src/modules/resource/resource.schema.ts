@@ -17,14 +17,14 @@ export const createResourceSchema = z.object({
   }),
   short_description: z
     .string()
-    .min(32, {
-      error: 'La descripción corta debe tener al menos 32 caracteres',
+    .min(24, {
+      error: 'La descripción corta debe tener al menos 24 caracteres',
     })
     .max(120, {
       error: 'La descripción corta debe tener máximo 120 caracteres',
     }),
-  description: z.string().min(64, {
-    error: 'La descripción debe tener al menos 64 caracteres',
+  description: z.string().min(24, {
+    error: 'La descripción debe tener al menos 24 caracteres',
   }),
 })
 

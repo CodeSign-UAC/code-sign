@@ -17,6 +17,7 @@ import { Route as AppLayoutRouteImport } from './routes/app/_layout'
 import { Route as AppLayoutHomeRouteImport } from './routes/app/_layout/home'
 import { Route as AppLayoutResourcesIndexRouteImport } from './routes/app/_layout/resources/index'
 import { Route as AppLayoutGlossaryIndexRouteImport } from './routes/app/_layout/glossary/index'
+import { Route as AppLayoutEditorIndexRouteImport } from './routes/app/_layout/editor/index'
 import { Route as AppLayoutResourcesIdRouteImport } from './routes/app/_layout/resources/$id'
 
 const AppRouteImport = createFileRoute('/app')()
@@ -54,6 +55,11 @@ const AppLayoutGlossaryIndexRoute = AppLayoutGlossaryIndexRouteImport.update({
   path: '/glossary/',
   getParentRoute: () => AppLayoutRoute,
 } as any)
+const AppLayoutEditorIndexRoute = AppLayoutEditorIndexRouteImport.update({
+  id: '/editor/',
+  path: '/editor/',
+  getParentRoute: () => AppLayoutRoute,
+} as any)
 const AppLayoutResourcesIdRoute = AppLayoutResourcesIdRouteImport.update({
   id: '/resources/$id',
   path: '/resources/$id',
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/': typeof LayoutIndexRoute
   '/app/home': typeof AppLayoutHomeRoute
   '/app/resources/$id': typeof AppLayoutResourcesIdRoute
+  '/app/editor': typeof AppLayoutEditorIndexRoute
   '/app/glossary': typeof AppLayoutGlossaryIndexRoute
   '/app/resources': typeof AppLayoutResourcesIndexRoute
 }
@@ -73,6 +80,7 @@ export interface FileRoutesByTo {
   '/': typeof LayoutIndexRoute
   '/app/home': typeof AppLayoutHomeRoute
   '/app/resources/$id': typeof AppLayoutResourcesIdRoute
+  '/app/editor': typeof AppLayoutEditorIndexRoute
   '/app/glossary': typeof AppLayoutGlossaryIndexRoute
   '/app/resources': typeof AppLayoutResourcesIndexRoute
 }
@@ -84,6 +92,7 @@ export interface FileRoutesById {
   '/_layout/': typeof LayoutIndexRoute
   '/app/_layout/home': typeof AppLayoutHomeRoute
   '/app/_layout/resources/$id': typeof AppLayoutResourcesIdRoute
+  '/app/_layout/editor/': typeof AppLayoutEditorIndexRoute
   '/app/_layout/glossary/': typeof AppLayoutGlossaryIndexRoute
   '/app/_layout/resources/': typeof AppLayoutResourcesIndexRoute
 }
@@ -94,6 +103,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app/home'
     | '/app/resources/$id'
+    | '/app/editor'
     | '/app/glossary'
     | '/app/resources'
   fileRoutesByTo: FileRoutesByTo
@@ -102,6 +112,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app/home'
     | '/app/resources/$id'
+    | '/app/editor'
     | '/app/glossary'
     | '/app/resources'
   id:
@@ -112,6 +123,7 @@ export interface FileRouteTypes {
     | '/_layout/'
     | '/app/_layout/home'
     | '/app/_layout/resources/$id'
+    | '/app/_layout/editor/'
     | '/app/_layout/glossary/'
     | '/app/_layout/resources/'
   fileRoutesById: FileRoutesById
@@ -172,6 +184,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppLayoutGlossaryIndexRouteImport
       parentRoute: typeof AppLayoutRoute
     }
+    '/app/_layout/editor/': {
+      id: '/app/_layout/editor/'
+      path: '/editor'
+      fullPath: '/app/editor'
+      preLoaderRoute: typeof AppLayoutEditorIndexRouteImport
+      parentRoute: typeof AppLayoutRoute
+    }
     '/app/_layout/resources/$id': {
       id: '/app/_layout/resources/$id'
       path: '/resources/$id'
@@ -196,6 +215,7 @@ const LayoutRouteWithChildren =
 interface AppLayoutRouteChildren {
   AppLayoutHomeRoute: typeof AppLayoutHomeRoute
   AppLayoutResourcesIdRoute: typeof AppLayoutResourcesIdRoute
+  AppLayoutEditorIndexRoute: typeof AppLayoutEditorIndexRoute
   AppLayoutGlossaryIndexRoute: typeof AppLayoutGlossaryIndexRoute
   AppLayoutResourcesIndexRoute: typeof AppLayoutResourcesIndexRoute
 }
@@ -203,6 +223,7 @@ interface AppLayoutRouteChildren {
 const AppLayoutRouteChildren: AppLayoutRouteChildren = {
   AppLayoutHomeRoute: AppLayoutHomeRoute,
   AppLayoutResourcesIdRoute: AppLayoutResourcesIdRoute,
+  AppLayoutEditorIndexRoute: AppLayoutEditorIndexRoute,
   AppLayoutGlossaryIndexRoute: AppLayoutGlossaryIndexRoute,
   AppLayoutResourcesIndexRoute: AppLayoutResourcesIndexRoute,
 }

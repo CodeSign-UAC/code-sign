@@ -1,13 +1,20 @@
-import { useLocation } from "@tanstack/react-router"
-import { SidebarTrigger } from "@/components/ui/sidebar"
-import { Separator } from "@/components/ui/separator"
-import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
+import { useLocation } from '@tanstack/react-router'
+import { SidebarTrigger } from '@/components/ui/sidebar'
+import { Separator } from '@/components/ui/separator'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb'
 
 const routeTitle: Record<string, string> = {
   '/app/home': 'Inicio',
   '/app/resources': 'Recursos',
   '/app/glossary': 'Glosario técnico',
   '/app/feedback': 'Enviar comentario',
+  '/app/editor': 'Editor de código',
 }
 
 export default function Header(): React.JSX.Element {
@@ -35,3 +42,4 @@ export default function Header(): React.JSX.Element {
     </header>
   )
 }
+

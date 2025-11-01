@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabaseClient"
-import type { GetTopicDto, InsertGlossaryDto, InsertTopicDto, TopicGlossariesDto, UpdateGlossaryDto } from "./glossary.model"
+import type { InsertGlossaryDto, InsertTopicDto, TopicGlossariesDto, UpdateGlossaryDto } from "./glossary.model"
 import type { PostgrestError } from "@supabase/supabase-js"
 
 const rcpError = (error: PostgrestError) => {
@@ -11,23 +11,46 @@ const rcpError = (error: PostgrestError) => {
   }
 }
 
-export const fetchTopicGlossaries = async (): Promise<TopicGlossariesDto[]> => {
-  try {
-    const { data, error } = await supabase.rpc('get_topics_with_glossaries')
+export const fetchTopicGlossaries = async () => {
+  const { data: topics, error: topicsError } = await supabase
+    .from('cat_topic')
+    .select('*')
+    .order('id_topic')
 
-    if (error) {
-      console.error('RPC Error:', rcpError(error))
-      throw error
-    }
-
-    if (!data || data.length === 0)
-      console.warn(`No se encontraron glosarios para los temas.`)
-
-    return data || null
-  } catch (err) {
-    console.error('Error inesperado en get_topics_with_glossaries:', err)
-    throw err
+  if (topicsError) {
+    console.error('Error fetching topics:', topicsError)
+    throw topicsError
   }
+
+  const { data: glossaries, error: glossariesError } = await supabase
+    .from('mst_glossary')
+    .select('*')
+    .neq('status', 3)
+    .in('id_topic', topics.map(t => t.id_topic))
+
+  if (glossariesError) {
+    console.error('Error fetching glossaries:', glossariesError);
+    throw glossariesError
+  }
+
+  const topicsWithGlossaries = topics.map(topic => {
+    const topicGlossaries = glossaries.filter(g => g.id_topic === topic.id_topic)
+    return {
+      ...topic,
+      glossaries: topicGlossaries.map(g => ({
+        id_glossary: g.id_glossary,
+        id_topic: g.id_topic,
+        term: g.term,
+        description: g.description,
+        video_url: g.video_url,
+        status: g.status,
+        created_at: g.created_at,
+        updated_at: g.updated_at
+      }))
+    }
+  })
+
+  return topicsWithGlossaries
 }
 
 export const createGlossaryTerm = async (glossary: InsertGlossaryDto): Promise<void> => {
@@ -44,17 +67,22 @@ export const createGlossaryTerm = async (glossary: InsertGlossaryDto): Promise<v
   }
 }
 
-export const fetchTopics = async (): Promise<GetTopicDto[]> => {
+export const fetchTopics = async (): Promise<{ id_topic: number; topic: string }[]> => {
   try {
-    const { data, error } = await supabase.rpc('get_topics')
+    const { data, error } = await supabase
+      .from('cat_topic')
+      .select('id_topic, topic')
+      .neq('status', 3)
+      .order('id_topic')
 
     if (error) {
-      console.error('RPC Error:', rcpError(error))
+      console.error('Supabase query error:', error)
       throw error
     }
 
-    if (!data || data.length === 0)
-      console.warn(`No se encontraron temas.`)
+    if (!data || data.length === 0) {
+      console.warn('No se encontraron temas.')
+    }
 
     return data || []
   } catch (err) {

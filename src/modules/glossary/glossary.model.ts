@@ -5,11 +5,6 @@ export interface CatTopic extends TableRecord {
   topic: string
 }
 
-export interface GetTopicDto {
-  p_id_topic: number
-  p_topic: string
-}
-
 export interface InsertTopicDto {
   p_topic: string
 }

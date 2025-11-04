@@ -1,17 +1,16 @@
-import type { TopicGlossariesDto } from "@/modules/glossary/glossary.model"
+import type { TopicDto } from "@/modules/glossary/glossary.model"
 import { Button } from "../ui/button"
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
 import CreateGlossary from "./create-glossary"
-import { DialogClose } from "@radix-ui/react-dialog"
 
 interface Props {
-  glossary: TopicGlossariesDto
+  glossary: TopicDto
 }
 
 export default function GlossaryActions({ glossary }: Props): React.JSX.Element {
   return (
     <Dialog>
-      <DialogTrigger asChild>
+      <DialogTrigger asChild className="w-full mb-4">
         <Button variant="outline" className="mr-2">
           Añadir término
         </Button>

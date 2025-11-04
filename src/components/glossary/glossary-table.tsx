@@ -3,13 +3,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import type { MstGlossary, UpdateGlossaryDto } from '@/modules/glossary/glossary.model'
 import { Button } from '../ui/button'
 import type React from 'react'
-import { Trash, Video, FileText, MoreVertical } from 'lucide-react'
+import { Trash, FileText, MoreVertical, Edit, BookOpen } from 'lucide-react'
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog'
 import { useMutation } from '@tanstack/react-query'
 import { deleteGlossary } from '@/modules/glossary/glossary.service'
 import { toast } from 'sonner'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu'
 import { Badge } from '../ui/badge'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu'
 
 interface Props {
   glossaries: MstGlossary[]
@@ -38,61 +38,69 @@ export default function GlossaryTable({ glossaries, onChanged }: Props): React.J
     columnHelper.accessor('term', {
       header: () => (
         <div className="flex items-center gap-2">
-          <span>Término</span>
+          <BookOpen className="h-4 w-4 text-muted-foreground" />
+          <span className="font-semibold">Término</span>
         </div>
       ),
       cell: info => (
-        <div className="font-medium text-foreground">
-          {info.getValue()}
+        <div className="flex flex-col">
+          <div className="font-semibold text-foreground group-hover:text-primary transition-colors">
+            {info.getValue()}
+          </div>
         </div>
       ),
-      size: 200,
+      size: 250,
     }),
     columnHelper.accessor('description', {
       header: () => (
         <div className="flex items-center gap-2">
-          <span>Descripción</span>
+          <FileText className="h-4 w-4 text-muted-foreground" />
+          <span className="font-semibold">Descripción</span>
         </div>
       ),
       cell: info => (
-        <div className="text-sm text-muted-foreground line-clamp-2">
+        <div className="text-sm text-muted-foreground leading-relaxed">
           {info.getValue()}
         </div>
       ),
-      size: 400,
+      size: 500,
     }),
     columnHelper.display({
       id: 'actions',
-      header: () => <span>Acciones</span>,
+      header: () => <span className="font-semibold">Acciones</span>,
       cell: info => {
         const glossary: MstGlossary = info.row.original
 
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 w-8 p-0 opacity-70 group-hover:opacity-100 transition-opacity"
+              >
                 <MoreVertical className="h-4 w-4" />
+                <span className="sr-only">Abrir menú</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              {glossary.video_url && (
-                <DropdownMenuItem asChild>
-                  <a
-                    href={glossary.video_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 cursor-pointer"
-                  >
-                    <Video className="h-4 w-4" />
-                    <span>Ver video</span>
-                  </a>
-                </DropdownMenuItem>
-              )}
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuItem
+                className="flex items-center gap-2 text-foreground cursor-pointer"
+                onClick={() => {
+                  toast.info("Funcionalidad de editar en desarrollo")
+                }}
+              >
+                <Edit className="h-4 w-4" />
+                <span>Editar término</span>
+              </DropdownMenuItem>
+
+              <DropdownMenuSeparator />
+
               <Dialog>
                 <DialogTrigger asChild>
                   <DropdownMenuItem
                     onSelect={(e) => e.preventDefault()}
-                    className="flex items-center gap-2 text-destructive focus:text-destructive"
+                    className="flex items-center gap-2 text-destructive focus:text-destructive cursor-pointer"
                   >
                     <Trash className="h-4 w-4" />
                     <span>Eliminar término</span>
@@ -100,18 +108,27 @@ export default function GlossaryTable({ glossaries, onChanged }: Props): React.J
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-md">
                   <DialogHeader>
-                    <DialogTitle className="flex items-center gap-2">
-                      <Trash className="h-5 w-5 text-destructive" />
+                    <DialogTitle className="flex items-center gap-2 text-destructive">
+                      <Trash className="h-5 w-5" />
                       Eliminar término
                     </DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4">
+                    <div className="bg-muted/50 rounded-lg p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Badge variant="secondary" className="font-normal">
+                          Término
+                        </Badge>
+                      </div>
+                      <p className="font-medium text-foreground">"{glossary.term}"</p>
+                    </div>
+
                     <p className="text-sm text-muted-foreground">
-                      ¿Estás seguro de que deseas eliminar el término
-                      <span className="font-semibold text-foreground"> "{glossary.term}"</span>?
+                      Esta acción eliminará permanentemente el término del glosario.
                       Esta acción no se puede deshacer.
                     </p>
-                    <div className="flex justify-end gap-3">
+
+                    <div className="flex justify-end gap-3 pt-2">
                       <DialogClose asChild>
                         <Button variant="outline" className="px-6">
                           Cancelar
@@ -135,7 +152,7 @@ export default function GlossaryTable({ glossaries, onChanged }: Props): React.J
           </DropdownMenu>
         )
       },
-      size: 80,
+      size: 100,
     })
   ]
 
@@ -147,26 +164,23 @@ export default function GlossaryTable({ glossaries, onChanged }: Props): React.J
 
   if (glossaries.length === 0) {
     return (
-      <div className="text-center py-12">
+      <div className="text-center py-12 bg-muted/20 rounded-lg border-2 border-dashed">
         <FileText className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-        <h3 className="text-lg font-semibold mb-2">No hay términos</h3>
-        <p className="text-muted-foreground">
-          Comienza agregando el primer término a este tema.
-        </p>
+        <h3 className="text-lg font-semibold mb-2 text-foreground">No hay términos</h3>
       </div>
     )
   }
 
   return (
-    <div className="rounded-lg border">
+    <div className="rounded-lg border bg-card">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} className="hover:bg-transparent">
+            <TableRow key={headerGroup.id} className="hover:bg-transparent border-b">
               {headerGroup.headers.map((header) => (
                 <TableHead
                   key={header.id}
-                  className="font-semibold text-foreground bg-muted/50"
+                  className="font-semibold text-foreground bg-muted/30 py-3"
                   style={{
                     width: header.getSize() !== 150 ? header.getSize() : undefined
                   }}
@@ -181,12 +195,12 @@ export default function GlossaryTable({ glossaries, onChanged }: Props): React.J
           {table.getRowModel().rows.map((row) => (
             <TableRow
               key={row.id}
-              className="border-b hover:bg-muted/30 transition-colors group"
+              className="border-b hover:bg-muted/20 transition-colors group last:border-b-0"
             >
               {row.getVisibleCells().map((cell) => (
                 <TableCell
                   key={cell.id}
-                  className="py-3 align-top"
+                  className="py-4 align-top"
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </TableCell>
@@ -195,6 +209,14 @@ export default function GlossaryTable({ glossaries, onChanged }: Props): React.J
           ))}
         </TableBody>
       </Table>
+
+      <div className="px-6 py-3 bg-muted/10 border-t">
+        <div className="flex justify-between items-center text-xs text-muted-foreground">
+          <span>
+            Mostrando {glossaries.length} término{glossaries.length !== 1 ? 's' : ''}
+          </span>
+        </div>
+      </div>
     </div>
   )
 }

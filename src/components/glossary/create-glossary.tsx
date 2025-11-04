@@ -20,7 +20,6 @@ export default function CreateGlossary({ id_topic }: Props): React.JSX.Element {
       id_topic,
       term: '',
       description: '',
-      video_url: ''
     }
   })
 
@@ -39,8 +38,7 @@ export default function CreateGlossary({ id_topic }: Props): React.JSX.Element {
     mutate({
       p_id_topic: data.id_topic,
       p_term: data.term,
-      p_description: data.description,
-      p_video_url: data.video_url || `https://example.com/intro-to-${data.term}.pdf`
+      p_description: data.description
     })
   }
 

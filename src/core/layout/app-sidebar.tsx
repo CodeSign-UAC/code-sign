@@ -1,29 +1,11 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar'
 import { Link, useLocation, useNavigate } from '@tanstack/react-router'
-import {
-  BookOpen,
-  Code,
-  Gavel,
-  House,
-  LogOut,
-  MessageSquare,
-} from 'lucide-react'
+import { BookOpen, Code, Gavel, House, LogOut, MessageSquare } from 'lucide-react'
 import type React from 'react'
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from '@/components/ui/sidebar'
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar'
 import { supabase } from '@/lib/supabaseClient'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/modules/auth/auth.provider'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 interface MenuItem {
   href: string

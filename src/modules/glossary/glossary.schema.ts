@@ -6,7 +6,6 @@ export const glossarySchema = z.object({
     error: "El término debe tener al menos dos letras"
   }),
   description: z.string().min(2).max(500),
-  video_url: z.string().nullable()
 })
 
 export const topicSchema = z.object({

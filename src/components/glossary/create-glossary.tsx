@@ -64,16 +64,6 @@ export default function CreateGlossary({ id_topic }: Props): React.JSX.Element {
             <FormMessage />
           </FormItem>
         )} />
-
-        <FormField name="video_url" control={form.control} render={({ field }) => (
-          <FormItem>
-            <FormLabel>Video URL</FormLabel>
-            <FormControl>
-              <Input type="text" placeholder="Introduce la URL del video" {...field} value={field.value ?? ""} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )} />
       </form>
     </Form>
   )

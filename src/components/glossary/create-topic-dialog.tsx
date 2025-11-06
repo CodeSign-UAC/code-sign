@@ -11,15 +11,18 @@ import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogT
 import { Plus } from "lucide-react"
 import { Button } from "../ui/button"
 
-interface Props { onCreated: () => void }
+interface Props {
+  onCreated: () => void
+  variant?: "default" | "outline"
+}
 
-export default function CreateTopic({ onCreated }: Props): React.JSX.Element {
+export default function CreateTopicDialog({ onCreated, variant = "default" }: Props): React.JSX.Element {
   const form = useForm<TopicSchema>({
     resolver: zodResolver(topicSchema),
     defaultValues: { topic: '' }
   })
 
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: (data: InsertTopicDto): Promise<void> => insertTopic(data),
     onSuccess: (): void => {
       form.reset()
@@ -27,17 +30,17 @@ export default function CreateTopic({ onCreated }: Props): React.JSX.Element {
       onCreated()
     },
     onError: (): void => {
-      toast.warning("Ocurrió un error al crear el tema.")
+      toast.error("Ocurrió un error al crear el tema.")
     }
   })
 
-  const onSubmit = (data: TopicSchema): void => mutate({ p_topic: data.topic })
+  const onSubmit = (data: TopicSchema): void => mutate({ topic: data.topic })
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className='flex items-center gap-1'>
-          <Plus />
+        <Button variant={variant} className='flex items-center gap-1'>
+          <Plus className="h-4 w-4" />
           Agregar tema
         </Button>
       </DialogTrigger>
@@ -51,7 +54,13 @@ export default function CreateTopic({ onCreated }: Props): React.JSX.Element {
               <FormItem>
                 <FormLabel>Tema</FormLabel>
                 <FormControl>
-                  <Input type="text" placeholder="Introduce el tema" {...field} value={field.value ?? ""} />
+                  <Input
+                    type="text"
+                    placeholder="Introduzca el nombre del tema"
+                    {...field}
+                    value={field.value ?? ""}
+                    disabled={isPending}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -59,12 +68,18 @@ export default function CreateTopic({ onCreated }: Props): React.JSX.Element {
           </form>
         </Form>
         <DialogFooter>
-          <Button type="submit" form="create-topic">Añadir término</Button>
-          <DialogClose asChild onClick={(): void => form.reset()}>
-            <Button variant="outline">
+          <DialogClose asChild>
+            <Button variant="outline" disabled={isPending}>
               Cancelar
             </Button>
           </DialogClose>
+          <Button
+            type="submit"
+            form="create-topic"
+            disabled={isPending}
+          >
+            {isPending ? "Creando..." : "Crear tema"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

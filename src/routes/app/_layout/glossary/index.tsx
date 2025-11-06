@@ -4,16 +4,17 @@ import type { TopicDto } from '@/modules/glossary/glossary.model'
 import { fetchTopics } from '@/modules/glossary/glossary.service'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { BookOpen, Search, FileText, TrendingUp, FolderOpen } from 'lucide-react'
+import { BookOpen, FileText, FolderOpen } from 'lucide-react'
 import GlossaryTable from '@/components/glossary/glossary-table'
 import { Skeleton } from '@/components/ui/skeleton'
-import CreateTopic from '@/components/glossary/create-topic'
+import CreateTopicDialog from '@/components/glossary/create-topic-dialog'
 import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
+import { SubtopicActions } from '@/components/glossary/subtopic-actions'
+import { TopicActions } from '@/components/glossary/topic-actions'
+import GlossaryStats from '@/components/glossary/glossary-stats'
 
 export const Route = createFileRoute('/app/_layout/glossary/')({
-  component: RouteComponent,
+  component: RouteComponent
 })
 
 function RouteComponent(): React.JSX.Element {
@@ -22,18 +23,18 @@ function RouteComponent(): React.JSX.Element {
     queryFn: () => fetchTopics(),
   })
 
-  const totalTerms = data?.reduce((acc, topic) =>
+  const totalTerms: number = data?.reduce((acc, topic) =>
     acc + topic.cat_subtopic.reduce((subAcc, subtopic) =>
       subAcc + (subtopic.mst_glossary?.length || 0), 0
     ), 0
   ) || 0
 
-  const totalTopics = data?.length || 0
-  const totalSubtopics = data?.reduce((acc, topic) =>
+  const totalTopics: number = data?.length || 0
+  const totalSubtopics: number = data?.reduce((acc, topic) =>
     acc + (topic.cat_subtopic?.length || 0), 0
   ) || 0
 
-  const averageTerms = totalTopics > 0 ? Math.round(totalTerms / totalTopics) : 0
+  const averageTerms: number = totalTopics > 0 ? Math.round(totalTerms / totalTopics) : 0
 
   return (
     <div className="space-y-6 p-6 max-w-7xl mx-auto">
@@ -44,7 +45,7 @@ function RouteComponent(): React.JSX.Element {
               <BookOpen size={24} className="text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold tracking-tight">Glosario Técnico</h1>
+              <h1 className="text-3xl font-bold tracking-tight">Glosario técnico</h1>
               <p className="text-muted-foreground mt-1">
                 Diccionario especializado con términos y definiciones relevantes para tu aprendizaje
               </p>
@@ -52,64 +53,12 @@ function RouteComponent(): React.JSX.Element {
           </div>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-4">
-          <Card className="border-blue-200 py-4 gap-2">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total de Términos</CardTitle>
-              <FileText className="h-4 w-4 text-blue-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalTerms}</div>
-              <p className="text-xs text-muted-foreground">Términos registrados</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-green-200 py-4 gap-2">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Temas</CardTitle>
-              <BookOpen className="h-4 w-4 text-green-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalTopics}</div>
-              <p className="text-xs text-muted-foreground">Categorías principales</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-purple-200 py-4 gap-2">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Subtemas</CardTitle>
-              <FolderOpen className="h-4 w-4 text-purple-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalSubtopics}</div>
-              <p className="text-xs text-muted-foreground">Subcategorías</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-amber-200 py-4 gap-2">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Promedio</CardTitle>
-              <TrendingUp className="h-4 w-4 text-amber-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{averageTerms}</div>
-              <p className="text-xs text-muted-foreground">Términos por tema</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Por implementar */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
-          <div className="flex-1 max-w-md">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input
-                placeholder="Buscar términos, temas o subtemas..."
-                className="pl-10"
-              />
-            </div>
-          </div>
-        </div>
+        <GlossaryStats
+          totalTerms={totalTerms}
+          totalTopics={totalTopics}
+          totalSubtopics={totalSubtopics}
+          averageTerms={averageTerms}
+        />
       </div>
 
       {/* Lista de temas con subtemas */}
@@ -117,12 +66,12 @@ function RouteComponent(): React.JSX.Element {
         <CardHeader className="pb-4">
           <div className="flex justify-between items-center">
             <div>
-              <CardTitle className="text-xl">Temas del Glosario</CardTitle>
+              <CardTitle className="text-xl">Temas del glosario</CardTitle>
               <CardDescription>
                 Explora los términos organizados por temas y subtemas
               </CardDescription>
             </div>
-            <CreateTopic onCreated={refetch} />
+            <CreateTopicDialog onCreated={refetch} />
           </div>
         </CardHeader>
         <CardContent className="p-0">
@@ -162,6 +111,11 @@ function RouteComponent(): React.JSX.Element {
                           </div>
                         </div>
                       </AccordionTrigger>
+                      <TopicActions
+                        topicId={topic.id_topic}
+                        topicName={topic.topic}
+                        onChanged={refetch}
+                      />
                     </div>
                     <AccordionContent className="pb-4 overflow-hidden">
                       <div className="space-y-4">
@@ -180,11 +134,11 @@ function RouteComponent(): React.JSX.Element {
                                     {subtopicTermsCount} término(s)
                                   </Badge>
                                 </div>
-                                {/* <GlossaryActions
-                                  subtopic={subtopic}
-                                  topicId={topic.id_topic}
+                                <SubtopicActions
+                                  subtopicId={subtopic.id_subtopic}
+                                  subtopicName={subtopic.subtopic_name}
                                   onChanged={refetch}
-                                /> */}
+                                />
                               </div>
 
                               {subtopicTermsCount > 0 ? (
@@ -198,8 +152,8 @@ function RouteComponent(): React.JSX.Element {
                                   <p className="text-muted-foreground font-medium">
                                     No hay términos en este subtema
                                   </p>
-                                  <p className="text-sm text-muted-foreground mt-1">
-                                    Comienza agregando el primer término a este subtema
+                                  <p className="text-sm text-muted-foreground mt-1 mb-4">
+                                    Comience por agregar el primer término a este subtema
                                   </p>
                                 </div>
                               )}
@@ -215,12 +169,8 @@ function RouteComponent(): React.JSX.Element {
                               No hay subtemas en este tema
                             </p>
                             <p className="text-sm text-muted-foreground mt-1 mb-4">
-                              Comienza creando el primer subtema para organizar los términos
+                              Comience por crear el primer subtema para organizar los términos
                             </p>
-                            <Button variant="outline">
-                              <FolderOpen className="h-4 w-4 mr-2" />
-                              Agregar Subtema
-                            </Button>
                           </div>
                         )}
                       </div>
@@ -240,9 +190,9 @@ function RouteComponent(): React.JSX.Element {
             <BookOpen className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">No hay temas creados</h3>
             <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-              Comienza creando tu primer tema para organizar los términos técnicos de tu glosario.
+              Comience por crear el primer tema para organizar los términos técnicos del glosario.
             </p>
-            <CreateTopic onCreated={refetch} />
+            <CreateTopicDialog onCreated={refetch} />
           </CardContent>
         </Card>
       )}

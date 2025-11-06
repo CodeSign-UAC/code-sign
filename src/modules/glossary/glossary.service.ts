@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabaseClient"
-import type { InsertGlossaryDto, InsertTopicDto, TopicDto, UpdateGlossaryDto } from "./glossary.model"
+import type { InsertGlossaryDto, InsertSubtopicDto, InsertTopicDto, TopicDto, UpdateSubtopicDto, UpdateTermDto, UpdateTopicDto } from "./glossary.model"
 import type { PostgrestError } from "@supabase/supabase-js"
 
 const rcpError = (error: PostgrestError) => {
@@ -71,68 +71,151 @@ export const fetchTopics = async (): Promise<TopicDto[]> => {
   return result
 }
 
-export const createGlossaryTerm = async (glossary: InsertGlossaryDto): Promise<void> => {
+export const insertTopic = async ({ topic }: InsertTopicDto): Promise<void> => {
   try {
-    const { error } = await supabase.rpc('create_glossary_term', glossary)
+    const { error } = await supabase
+      .from('cat_topic')
+      .insert({ topic })
 
     if (error) {
-      console.error('RPC Error:', rcpError(error))
+      console.error('Supabase insert error:', error)
       throw error
     }
   } catch (err) {
-    console.error('Error inesperado en create_glossary_term:', err)
+    console.error('Error inesperado en insertTopic:', err)
     throw err
   }
 }
 
-// export const fetchTopics = async (): Promise<{ id_topic: number; topic: string }[]> => {
-//   try {
-//     const { data, error } = await supabase
-//       .from('cat_topic')
-//       .select('id_topic, topic')
-//       .neq('status', 3)
-//       .order('id_topic')
-
-//     if (error) {
-//       console.error('Supabase query error:', error)
-//       throw error
-//     }
-
-//     if (!data || data.length === 0) {
-//       console.warn('No se encontraron temas.')
-//     }
-
-//     return data || []
-//   } catch (err) {
-//     console.error('Error inesperado en fetchTopics:', err)
-//     throw err
-//   }
-// }
-
-export const insertTopic = async (topic: InsertTopicDto): Promise<void> => {
+export const insertSubtopic = async (subtopic: InsertSubtopicDto): Promise<void> => {
   try {
-    const { error } = await supabase.rpc('create_topic', topic)
+    const { error } = await supabase
+      .from('cat_subtopic')
+      .insert({
+        id_topic: subtopic.id_topic,
+        subtopic_name: subtopic.subtopic_name,
+      })
 
     if (error) {
-      console.error('RPC Error:', rcpError(error))
+      console.error('Supabase insert error:', error)
       throw error
     }
   } catch (err) {
-    console.error('Error inesperado en fetchTopics:', err)
+    console.error('Error inesperado en insertSubtopic:', err)
     throw err
   }
 }
 
-export const deleteGlossary = async (id: UpdateGlossaryDto): Promise<void> => {
+export const insertGlossaryTerm = async (glossary: InsertGlossaryDto): Promise<void> => {
   try {
-    const { error } = await supabase.rpc('delete_glossary', id)
+    const { error } = await supabase
+      .from('mst_glossary')
+      .insert({
+        id_subtopic: glossary.id_subtopic,
+        term: glossary.term,
+        description: glossary.description,
+      })
 
     if (error) {
-      console.error('RPC Error:', rcpError(error))
+      console.error('Supabase insert error:', error)
       throw error
     }
   } catch (err) {
-    console.error('Error inesperado en deleteGlossary:', err)
+    console.error('Error inesperado en insertGlossaryTerm:', err)
+    throw err
+  }
+}
+
+export const deleteTopic = async (topicId: number): Promise<void> => {
+  try {
+    const { error } = await supabase
+      .from('cat_topic')
+      .update({ status: 3 })
+      .eq('id_topic', topicId)
+
+    if (error) throw error
+  } catch (err) {
+    console.error('Error deleting topic:', err)
+    throw err
+  }
+}
+
+export const deleteSubtopic = async (subtopicId: number): Promise<void> => {
+  try {
+    const { error } = await supabase
+      .from('cat_subtopic')
+      .update({ status: 3 })
+      .eq('id_subtopic', subtopicId)
+
+    if (error) throw error
+  } catch (err) {
+    console.error('Error deleting subtopic:', err)
+    throw err
+  }
+}
+
+export const deleteTerm = async (termId: number): Promise<void> => {
+  try {
+    const { error } = await supabase
+      .from('mst_glossary')
+      .update({ status: 3 })
+      .eq('id_glossary', termId)
+
+    if (error) throw error
+  } catch (err) {
+    console.error('Error inesperado en deleteTerm:', err)
+    throw err
+  }
+}
+
+export const updateTopic = async (topic: UpdateTopicDto): Promise<void> => {
+  try {
+    const { error } = await supabase
+      .from('cat_topic')
+      .update({
+        topic: topic.topic,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id_topic', topic.id_topic)
+
+    if (error) throw error
+  } catch (err) {
+    console.error('Error updating topic:', err)
+    throw err
+  }
+}
+
+export const updateSubtopic = async (subtopic: UpdateSubtopicDto): Promise<void> => {
+  try {
+    const { error } = await supabase
+      .from('cat_subtopic')
+      .update({
+        subtopic_name: subtopic.subtopic_name,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id_subtopic', subtopic.id_subtopic)
+
+    if (error) throw error
+  } catch (err) {
+    console.error('Error updating subtopic:', err)
+    throw err
+  }
+}
+
+export const updateTerm = async (term: UpdateTermDto): Promise<void> => {
+  try {
+    const { error } = await supabase
+      .from('mst_glossary')
+      .update({
+        term: term.term,
+        description: term.description,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id_glossary', term.id_glossary)
+
+    if (error) throw error
+  } catch (err) {
+    console.error('Error updating term:', err)
     throw err
   }
 }

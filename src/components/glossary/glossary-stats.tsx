@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { BookOpen, FileText, FolderOpen, TrendingUp } from 'lucide-react'
 
 interface GlossaryStatsProps {
@@ -15,50 +15,61 @@ export default function GlossaryStats({
   averageTerms
 }: GlossaryStatsProps): React.JSX.Element {
   return (
-    <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-4">
-      <Card className="border-blue-200 py-4 gap-2">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total de términos</CardTitle>
-          <FileText className="h-4 w-4 text-blue-600" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{totalTerms}</div>
-          <p className="text-xs text-muted-foreground">Términos registrados</p>
-        </CardContent>
-      </Card>
+    <Card>
+      <CardContent className="p-0">
+        <div className="grid grid-cols-1 divide-y sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4 lg:divide-y-0">
+          <div className="p-6">
+            <div className="flex items-center space-x-2">
+              <FileText className="h-4 w-4 text-muted-foreground" />
+              <h3 className="text-sm font-medium text-muted-foreground">
+                Total de términos
+              </h3>
+            </div>
+            <p className="mt-2 text-3xl font-semibold tracking-tight">
+              {totalTerms}
+            </p>
+          </div>
 
-      <Card className="border-green-200 py-4 gap-2">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Temas</CardTitle>
-          <BookOpen className="h-4 w-4 text-green-600" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{totalTopics}</div>
-          <p className="text-xs text-muted-foreground">Categorías principales</p>
-        </CardContent>
-      </Card>
+          <div className="p-6">
+            <div className="flex items-center space-x-2">
+              <BookOpen className="h-4 w-4 text-muted-foreground" />
+              <h3 className="text-sm font-medium text-muted-foreground">
+                Temas
+              </h3>
+            </div>
+            <p className="mt-2 text-3xl font-semibold tracking-tight">
+              {totalTopics}
+            </p>
+          </div>
 
-      <Card className="border-purple-200 py-4 gap-2">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Subtemas</CardTitle>
-          <FolderOpen className="h-4 w-4 text-purple-600" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{totalSubtopics}</div>
-          <p className="text-xs text-muted-foreground">Subcategorías</p>
-        </CardContent>
-      </Card>
+          <div className="p-6">
+            <div className="flex items-center space-x-2">
+              <FolderOpen className="h-4 w-4 text-muted-foreground" />
+              <h3 className="text-sm font-medium text-muted-foreground">
+                Subtemas
+              </h3>
+            </div>
+            <p className="mt-2 text-3xl font-semibold tracking-tight">
+              {totalSubtopics}
+            </p>
+          </div>
 
-      <Card className="border-amber-200 py-4 gap-2">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Promedio</CardTitle>
-          <TrendingUp className="h-4 w-4 text-amber-600" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{averageTerms}</div>
-          <p className="text-xs text-muted-foreground">Términos por tema</p>
-        </CardContent>
-      </Card>
-    </div>
+          <div className="p-6">
+            <div className="flex items-center space-x-2">
+              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              <h3 className="text-sm font-medium text-muted-foreground">
+                Promedio
+              </h3>
+            </div>
+            <p className="mt-2 text-3xl font-semibold tracking-tight">
+              {averageTerms}
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Términos por tema
+            </p>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   )
 }

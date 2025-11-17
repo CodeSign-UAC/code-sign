@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query'
 import type { UserDto } from '../../modules/user/user.model'
 import { fetchUser } from '@/modules/user/user.service'
 
-type UserRoles = 'Administrador' | 'Profesor' | 'Estudiante' | 'Usuario'
+export type UserRoles = 'Administrador' | 'Profesor' | 'Estudiante' | 'Usuario'
 
 const renderRole = (role: number): UserRoles => {
   switch (role) {
@@ -43,9 +43,7 @@ export function useSession() {
       }
     })
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setCurrentSession(session)
       setLoading(false)
       if (session?.access_token) {

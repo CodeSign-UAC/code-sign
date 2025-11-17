@@ -6,7 +6,7 @@ export const Route = createFileRoute('/_layout')({
 
 function LoginLayout() {
   return (
-    <main className='container min-h-screen mx-auto'>
+    <main className='min-h-screen'>
       <Outlet />
     </main>
   )

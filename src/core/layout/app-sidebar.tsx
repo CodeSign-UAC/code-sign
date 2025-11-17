@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from '@tanstack/react-router'
-import { BookOpen, Code, Gavel, House, LogOut, MessageSquare } from 'lucide-react'
+import { BookOpen, Code, Gavel, House, LogOut } from 'lucide-react'
 import type React from 'react'
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar'
 import { supabase } from '@/lib/supabaseClient'
@@ -17,12 +17,7 @@ const menuItems: MenuItem[] = [
   { href: '/app/home', label: 'Inicio', icon: <House /> },
   { href: '/app/resources', label: 'Recursos', icon: <BookOpen /> }, // No debería estar disponible para Alumnos, debería ser el crud (?).
   { href: '/app/glossary', label: 'Glosario técnico', icon: <Gavel /> },
-  { href: '/app/editor', label: 'Editor de código', icon: <Code /> },
-  {
-    href: '/app/feedback',
-    label: 'Enviar comentario',
-    icon: <MessageSquare />,
-  },
+  { href: '/app/editor', label: 'Editor de código', icon: <Code /> }
 ]
 
 export default function AppSidebar(): React.JSX.Element {
@@ -87,7 +82,6 @@ export default function AppSidebar(): React.JSX.Element {
           Cerrar sesión
         </Button>
       </SidebarFooter>
-      {/* <SidebarRail /> */}
     </Sidebar>
   )
 }

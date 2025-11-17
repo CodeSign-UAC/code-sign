@@ -31,7 +31,6 @@ export function TopicActions({ topicId, topicName, onChanged }: TopicActionsProp
       <PopoverTrigger asChild>
         <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
           <EllipsisVertical className="h-4 w-4" />
-          <span className="sr-only">Abrir acciones</span>
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-48 p-2" align="end">

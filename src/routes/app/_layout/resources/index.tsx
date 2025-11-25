@@ -17,7 +17,7 @@ export default function ResourcePage(): React.JSX.Element {
     data: MstResource[]
   }>({ isLoading: true, data: [] })
 
-  const { user_id } = useAuth()
+  const { role, user_id } = useAuth() 
 
   const {
     data: myResourcesData,
@@ -25,12 +25,8 @@ export default function ResourcePage(): React.JSX.Element {
     refetch: refetchMyResources,
   } = useUserResourcesQuery(user_id ?? 0)
 
-
   const refreshResources = async () => {
-
     refetchMyResources()
-
-
     setResources(prev => ({ ...prev, isLoading: true }))
     try {
       const allResources = await fetchAllResources()
@@ -40,7 +36,6 @@ export default function ResourcePage(): React.JSX.Element {
       setResources({ isLoading: false, data: [] })
     }
   }
-
 
   useEffect(() => {
     refreshResources()
@@ -56,12 +51,15 @@ export default function ResourcePage(): React.JSX.Element {
           isLoading={isLoadingMyResources}
         />
       </section>
+
       <section className="mt-8">
         <ListResources
           resources={resources.data}
           isLoading={resources.isLoading}
         >
-          <CreateResourceDialog onCreate={refreshResources} />
+          {role !== 'Estudiante' && ( 
+            <CreateResourceDialog onCreate={refreshResources} />
+          )}
         </ListResources>
       </section>
     </div>

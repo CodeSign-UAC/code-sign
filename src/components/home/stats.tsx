@@ -38,8 +38,14 @@ export default function Stats({ resources = [], isLoading }: Props): React.JSX.E
 }
 
 const renderStats = (resources: MstResource[]) => {
-  const addedResources: number = resources.length || 0
-  const courseProgress: number = 0; {/* En base a has_completed */ }
+  const addedResources = resources.length;
+
+  const completedResources = resources.filter(r => r.has_completed).length;
+
+  const courseProgress =
+    addedResources > 0
+      ? Math.round((completedResources / addedResources) * 100)
+      : 0;
 
   return (
     <>
@@ -50,6 +56,15 @@ const renderStats = (resources: MstResource[]) => {
           <p className="text-base font-normal">Recursos asignados</p>
         </div>
       </div>
+
+      <div className="flex items-center bg-green-100 p-4 rounded-lg gap-3">
+        <GraduationCap size={32} className="text-green-600" />
+        <div>
+          <h2 className="text-lg font-bold">{completedResources}</h2>
+          <p className="text-base font-normal">Recursos completados</p>
+        </div>
+      </div>
+
       <div className="flex items-center bg-purple-100 p-4 rounded-lg gap-3">
         <TrendingUp size={32} className="text-purple-600" />
         <div>
@@ -58,5 +73,5 @@ const renderStats = (resources: MstResource[]) => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};

@@ -1,4 +1,5 @@
-import { useState } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { KeyRound, Mail } from 'lucide-react'
@@ -50,6 +51,16 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps): JSX.Element {
       onSuccess()
     }
   }
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const email = params.get('email')
+    const password = params.get('password')
+
+    if (email && password) {
+      onSubmit({ email, password })
+    }
+  }, [])
 
   return (
     <form

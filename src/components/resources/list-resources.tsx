@@ -36,13 +36,13 @@ export default function ListResources({
     const lowerCaseSearchTerm: string = searchTerm.toLowerCase()
 
     return resources.length
-    ? resources.filter(
-        ({ title, description }) =>
-          (title ?? "").toLowerCase().includes(lowerCaseSearchTerm) ||
-          (description ?? "").toLowerCase().includes(lowerCaseSearchTerm),
-      )
-    : []
-    }, [searchTerm, isLoading])
+      ? resources.filter(
+          ({ title, description }) =>
+            (title ?? '').toLowerCase().includes(lowerCaseSearchTerm) ||
+            (description ?? '').toLowerCase().includes(lowerCaseSearchTerm),
+        )
+      : []
+  }, [searchTerm, isLoading])
 
   return (
     <Card>
@@ -88,9 +88,14 @@ export default function ListResources({
 const renderResources = (resources: Array<MstResource>) => {
   if (!resources?.length)
     return (
-      <div className="flex justify-center items-center mt-8 gap-2">
-        <SearchX />
-        <p className="font-medium text-xl">No se encontraron recursos.</p>
+      <div className="flex items-center gap-4 flex-col">
+        <div className="flex justify-center items-center mt-8 gap-2">
+          <SearchX />
+          <p className="font-medium text-xl">No se encontraron recursos.</p>
+        </div>
+        <p className="opacity-70">
+          Inscríbete a un recurso disponible en la siguiente sección
+        </p>
       </div>
     )
 

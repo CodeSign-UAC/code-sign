@@ -2,7 +2,7 @@ import { createContext, useContext } from 'react'
 import { useSession } from '../../core/hooks/useSession'
 import Spinner from '@/components/auth/spinner'
 
-interface AuthContextProps {
+export interface AuthContextProps {
   role: 'Administrador' | 'Profesor' | 'Estudiante' | 'Usuario'
   name: string
   user_id: number | undefined

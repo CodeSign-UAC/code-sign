@@ -30,7 +30,6 @@ export default function GlossaryTable({ glossaries, onChanged, hasAdminPermissio
             </div>
           </div>
         ),
-        size: 250,
       }),
       columnHelper.accessor('description', {
         header: () => (
@@ -40,7 +39,7 @@ export default function GlossaryTable({ glossaries, onChanged, hasAdminPermissio
           </div>
         ),
         cell: info => (
-          <div className="text-sm text-muted-foreground leading-relaxed">
+          <div className="text-sm text-muted-foreground leading-relaxed whitespace-normal wrap-break-word">
             {info.getValue()}
           </div>
         ),
@@ -62,7 +61,6 @@ export default function GlossaryTable({ glossaries, onChanged, hasAdminPermissio
               />
             )
           },
-          size: 100
         })
       )
     }

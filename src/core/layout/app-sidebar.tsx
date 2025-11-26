@@ -1,46 +1,39 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar'
 import { Link, useLocation, useNavigate } from '@tanstack/react-router'
-import {
-  BookOpen,
-  Code,
-  Gavel,
-  House,
-  LogOut,
-  MessageSquare,
-} from 'lucide-react'
+import { BookOpen, Code, Gavel, House, LogOut, ChevronRight } from 'lucide-react'
 import type React from 'react'
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from '@/components/ui/sidebar'
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar'
 import { supabase } from '@/lib/supabaseClient'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/modules/auth/auth.provider'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 interface MenuItem {
   href: string
   label: string
-  icon: React.JSX.Element
+  icon: React.ElementType
 }
 
 const menuItems: MenuItem[] = [
-  { href: '/app/home', label: 'Inicio', icon: <House /> },
-  { href: '/app/resources', label: 'Recursos', icon: <BookOpen /> }, // No debería estar disponible para Alumnos, debería ser el crud (?).
-  { href: '/app/glossary', label: 'Glosario técnico', icon: <Gavel /> },
-  { href: '/app/editor', label: 'Editor de código', icon: <Code /> },
   {
-    href: '/app/feedback',
-    label: 'Enviar comentario',
-    icon: <MessageSquare />,
+    href: '/app/home',
+    label: 'Inicio',
+    icon: House
   },
+  {
+    href: '/app/resources',
+    label: 'Recursos',
+    icon: BookOpen,
+  },
+  {
+    href: '/app/glossary',
+    label: 'Glosario técnico',
+    icon: Gavel
+  },
+  {
+    href: '/app/editor',
+    label: 'Editor de código',
+    icon: Code
+  }
 ]
 
 export default function AppSidebar(): React.JSX.Element {
@@ -53,38 +46,63 @@ export default function AppSidebar(): React.JSX.Element {
     if (!error) navigate({ to: '/' })
   }
 
+  const imgFallback = name
+    ? name.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase()
+    : 'U'
+
   return (
     <Sidebar>
-      {/* Header */}
-      <SidebarHeader className="p-4">
-        <div className="flex items-center gap-3">
-          <Avatar className="rounded-lg w-10 h-10">
-            <AvatarImage src="/universidad_american_college.svg" />
-            <AvatarFallback>AM</AvatarFallback>
-          </Avatar>
-          <div>
-            <p className="text-sm font-medium text-gray-600">{name}</p>
-            <p className="text-xs text-muted-foreground">{role}</p>
-          </div>
-        </div>
+      <SidebarHeader className="p-4 pb-2 border-b border-border">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <div className="flex items-center gap-3 p-2 rounded-md transition-colors hover:bg-sidebar-accent group">
+              <Avatar className="h-10 w-10 border border-border shadow-sm">
+                <AvatarImage src="/universidad_american_college.svg" alt={name || 'Usuario'} />
+                <AvatarFallback className="bg-primary/10 text-primary font-bold">
+                  {imgFallback}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
+                <span className="truncate font-semibold text-foreground">
+                  {name || 'Usuario'}
+                </span>
+                <span className="truncate text-xs text-muted-foreground capitalize">
+                  {role || 'Invitado'}
+                </span>
+              </div>
+            </div>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
-      {/* Content */}
-      <SidebarContent>
+
+      <SidebarContent className="px-2">
         <SidebarGroup>
-          <SidebarGroupLabel>Navegación</SidebarGroupLabel>
+          <SidebarGroupLabel className="px-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            Plataforma
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {menuItems.map((item: MenuItem): React.JSX.Element => {
-                const isActive: boolean = location.pathname === item.href
+              {menuItems.map((item) => {
+                const isActive = location.pathname === item.href
+
                 return (
-                  <SidebarMenuItem key={item.label}>
+                  <SidebarMenuItem key={item.href}>
                     <SidebarMenuButton
                       asChild
-                      className={`${isActive && 'bg-sidebar-accent text-blue-600'} hover:text-blue-600 active:text-blue-600`}
+                      isActive={isActive}
+                      tooltip={item.label}
+                      className={`
+                        transition-all duration-200 ease-in-out py-5 
+                        ${isActive
+                          ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium shadow-sm"
+                          : "text-muted-foreground hover:text-foreground hover:bg-sidebar-accent/50"
+                        }
+                      `}
                     >
-                      <Link to={item.href}>
-                        {item.icon}
-                        <span className="text-sm">{item.label}</span>
+                      <Link to={item.href} className="flex items-center gap-3 w-full">
+                        <item.icon className={`h-5 w-5${isActive ? " text-blue-500" : "opacity-70"}`} />
+                        <span className={`${isActive && 'text-blue-500'}`}>{item.label}</span>
+                        {isActive && <ChevronRight className="ml-auto h-4 w-4 opacity-50" />}
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -94,18 +112,24 @@ export default function AppSidebar(): React.JSX.Element {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      {/* Footer */}
-      <SidebarFooter className="p-4">
-        <Button
-          variant={'outline'}
-          className="w-full cursor-pointer hover:bg-black hover:text-white"
-          onClick={handleLogout}
-        >
-          <LogOut className="h-4 w-4" />
-          Cerrar sesión
-        </Button>
+
+      <SidebarFooter className="p-4 pt-2">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <Button
+              variant="ghost"
+              className={`
+                w-full justify-start gap-3 pl-2
+                text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors
+              `}
+              onClick={handleLogout}
+            >
+              <LogOut className="h-4 w-4" />
+              <span className="group-data-[collapsible=icon]:hidden">Cerrar sesión</span>
+            </Button>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarFooter>
-      {/* <SidebarRail /> */}
     </Sidebar>
   )
 }

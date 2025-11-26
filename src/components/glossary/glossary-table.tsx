@@ -1,93 +1,72 @@
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable, type ColumnHelper } from '@tanstack/react-table'
+import { createColumnHelper, flexRender, getCoreRowModel, useReactTable, type ColumnHelper, type ColumnDef } from '@tanstack/react-table'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import type { MstGlossary, UpdateGlossaryDto } from '@/modules/glossary/glossary.model'
-import { Button } from '../ui/button'
-import type React from 'react'
-import { Trash, Video } from 'lucide-react'
-import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog'
-import { useMutation } from '@tanstack/react-query'
-import { deleteGlossary } from '@/modules/glossary/glossary.service'
-import { toast } from 'sonner'
+import type { MstGlossary } from '@/modules/glossary/glossary.model'
+import { FileText, BookOpen } from 'lucide-react'
+import { TermActions } from './terms-actions'
+import { useMemo } from 'react'
 
 interface Props {
   glossaries: MstGlossary[]
   onChanged: () => void
+  hasAdminPermission: boolean
 }
 
 const columnHelper: ColumnHelper<MstGlossary> = createColumnHelper<MstGlossary>()
 
-const useDeleteGlossary = (onChanged: () => void) => {
-  return useMutation({
-    mutationFn: async (id: UpdateGlossaryDto): Promise<void> => deleteGlossary(id),
-    onSuccess: (): void => {
-      toast.success("Glosario eliminado con éxito.")
-      onChanged()
-    },
-    onError: (): void => {
-      toast.warning("Ocurrió un error al eliminar el glosario.")
+export default function GlossaryTable({ glossaries, onChanged, hasAdminPermission }: Props): React.JSX.Element {
+  const columns = useMemo(() => {
+    const baseColumns: ColumnDef<MstGlossary, any>[] = [
+      columnHelper.accessor('term', {
+        header: () => (
+          <div className="flex items-center gap-2">
+            <BookOpen className="h-4 w-4 text-muted-foreground" />
+            <span className="font-semibold">Término</span>
+          </div>
+        ),
+        cell: info => (
+          <div className="flex flex-col">
+            <div className="font-semibold text-foreground group-hover:text-primary transition-colors">
+              {info.getValue()}
+            </div>
+          </div>
+        ),
+      }),
+      columnHelper.accessor('description', {
+        header: () => (
+          <div className="flex items-center gap-2">
+            <FileText className="h-4 w-4 text-muted-foreground" />
+            <span className="font-semibold">Descripción</span>
+          </div>
+        ),
+        cell: info => (
+          <div className="text-sm text-muted-foreground leading-relaxed whitespace-normal wrap-break-word">
+            {info.getValue()}
+          </div>
+        ),
+        size: 500,
+      }),
+    ]
+
+    if (hasAdminPermission) {
+      baseColumns.push(
+        columnHelper.display({
+          id: 'actions',
+          header: () => <span className="font-semibold">Acciones</span>,
+          cell: info => {
+            const glossary: MstGlossary = info.row.original
+            return (
+              <TermActions
+                glossary={glossary}
+                onChanged={onChanged}
+              />
+            )
+          },
+        })
+      )
     }
-  })
-}
 
-export default function GlossaryTable({ glossaries, onChanged }: Props): React.JSX.Element {
-  const { mutate } = useDeleteGlossary(onChanged)
-
-  const columns = [
-    columnHelper.accessor('term', {
-      header: () => <span>Término</span>,
-      cell: info => info.getValue(),
-    }),
-    columnHelper.accessor('description', {
-      header: () => <span>Descripción</span>,
-      cell: info => info.getValue(),
-    }),
-    columnHelper.accessor('video_url', {
-      header: () => <span>URL del video</span>,
-      cell: info => {
-        if (info.getValue()) {
-          return (
-            <Button variant={'outline'}>
-              <Video />
-              <a href={info.getValue() ?? undefined} target="_blank">Ver video</a>
-            </Button>
-          )
-        }
-        return <span>—</span>
-      },
-    }),
-    columnHelper.display({
-      id: 'actions',
-      header: () => <span>Acciones</span>,
-      cell: info => {
-        const glossary: MstGlossary = info.row.original
-
-        return (
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant={'outline'}>
-                <Trash />
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>¿Desea eliminar este glosario?</DialogTitle>
-              </DialogHeader>
-              <div className='flex justify-end gap-2'>
-                <DialogClose asChild>
-                  <Button variant={'outline'}>Cancelar</Button>
-                </DialogClose>
-                <Button variant={'destructive'} onClick={(): void => {
-                  mutate({ p_id_glossary: glossary.id_glossary })
-                }}>
-                  Eliminar
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
-        )
-      }
-    })
-  ]
+    return baseColumns
+  }, [onChanged, hasAdminPermission])
 
   const table = useReactTable({
     data: glossaries,
@@ -95,30 +74,72 @@ export default function GlossaryTable({ glossaries, onChanged }: Props): React.J
     getCoreRowModel: getCoreRowModel()
   })
 
+
   return (
-    <Table>
-      <TableHeader>
-        {table.getHeaderGroups().map((headerGroup) => (
-          <TableRow key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <TableHead key={header.id}>
-                {flexRender(header.column.columnDef.header, header.getContext())}
-              </TableHead>
-            ))}
-          </TableRow>
-        ))}
-      </TableHeader>
-      <TableBody>
-        {table.getRowModel().rows.map((row) => (
-          <TableRow key={row.id}>
-            {row.getVisibleCells().map((cell) => (
-              <TableCell key={cell.id}>
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+    <div className="rounded-lg border bg-card">
+      <Table>
+        <TableHeader>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id} className="hover:bg-transparent border-b">
+              {headerGroup.headers.map((header) => (
+                <TableHead
+                  key={header.id}
+                  className="font-semibold text-foreground bg-muted/30 py-3"
+                  style={{ width: header.getSize() }}
+                >
+                  {flexRender(header.column.columnDef.header, header.getContext())}
+                </TableHead>
+              ))}
+            </TableRow>
+          ))}
+        </TableHeader>
+        <TableBody>
+          {table.getRowModel().rows.length > 0 ? (
+            table.getRowModel().rows.map((row) => (
+              <TableRow
+                key={row.id}
+                className="border-b hover:bg-muted/20 transition-colors group last:border-b-0"
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell
+                    key={cell.id}
+                    className="py-4 align-top"
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell
+                colSpan={columns.length} // <-- Esto se ajustará automáticamente
+                className="h-48 text-center"
+              >
+                <div className="flex flex-col items-center justify-center gap-3">
+                  <FileText className="h-12 w-12 text-muted-foreground" />
+                  <div className="space-y-1">
+                    <h3 className="text-lg font-semibold">No hay términos</h3>
+                    <p className="text-sm text-muted-foreground">
+                      No se han agregado términos a este subtema.
+                    </p>
+                  </div>
+                </div>
               </TableCell>
-            ))}
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+
+      {table.getRowModel().rows.length > 0 && (
+        <div className="px-6 py-3 bg-muted/10 border-t">
+          <div className="flex justify-between items-center text-xs text-muted-foreground">
+            <span>
+              Mostrando {glossaries.length} término{glossaries.length !== 1 ? 's' : ''}
+            </span>
+          </div>
+        </div>
+      )}
+    </div>
   )
 }

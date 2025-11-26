@@ -3,7 +3,6 @@ import type { MstResource } from '@/modules/resource/resource.model'
 import { fetchResourceByIdWithUserStatus } from '@/modules/resource/resource.service'
 import { createFileRoute, Link, notFound } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
-import { useParams } from '@tanstack/react-router'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { categoryIcon, categoryValue } from '@/modules/resource/resource.util'
 import { Badge } from '@/components/ui/badge'
@@ -15,7 +14,6 @@ import DeleteResourceDialog from '@/components/resources/delete-resource-dialog'
 import UpdateResourceDialog from '@/components/resources/update-resource-dialog'
 import TrackResourceDialog from '@/components/resources/track-resource-dialog'
 import CompleteResourceButton from '@/components/resources/complete-resource-dialog'
-import { supabase } from '@/lib/supabaseClient'
 import {
   VideoPlayer,
   VideoPlayerContent,
@@ -31,68 +29,54 @@ import {
 
 export const Route = createFileRoute('/app/_layout/resources/$id')({
   component: RouteComponent,
+  loader: async ({ params: { id }, context }) => {
+    const user_id = context.auth?.user_id
+
+    if (user_id === undefined) {
+      console.error('User not authenticated')
+      notFound()
+      return
+    }
+
+    if (isNaN(Number(id))) {
+      console.error('Invalid resource id:', id)
+      notFound()
+      return
+    }
+
+    const data = await fetchResourceByIdWithUserStatus(Number(id), user_id)
+    if (!data) {
+      console.error('Resource not found or inaccessible:', id)
+      notFound()
+      return
+    }
+
+    return { resource: data }
+  },
 })
 
 function RouteComponent() {
-  const [resource, setResources] = useState<MstResource | null>()
-  const [isLoading, setIsLoading] = useState(true)
+  const loaderData = Route.useLoaderData()
+  const loaderResource = loaderData?.resource
+  const [resource, setResources] = useState<MstResource | null>(
+    loaderResource || null,
+  )
+  const [isLoading, setIsLoading] = useState(!loaderResource)
   const [fileData, setFileData] = useState<{
     type: 'image' | 'video' | 'pdf' | 'other'
     contentType: string | null
     contentLength: string | null
   }>()
 
-  const [userUUID, setUserUUID] = useState<string | null>(null)
-
   const { user_id } = useAuth()
-  const { id } = useParams({ from: '/app/_layout/resources/$id' })
 
-    const fetchUserUUID = async (userIdNumber: number): Promise<string | null> => {
-    const { data, error } = await supabase
-  .from('mst_user')
-  .select('id_user') 
-  .eq('user_number', userIdNumber) 
-  .single()
-
-    if (error) {
-      console.error('Error fetching user UUID:', error)
-      return null
-    }
-
-    return data?.id_user || null
-  }
-
+  // Update resource state when loader data changes
   useEffect(() => {
-    if (!user_id) return
-
-    fetchUserUUID(user_id).then(uuid => setUserUUID(uuid))
-  }, [user_id])
-
-
-
-  useEffect(() => {
-    const fetchResource = async () => {
-      if (user_id === undefined || id === undefined) {
-        notFound()
-        return
-      }
-
-      if (isNaN(Number(id))) {
-        console.error('Invalid resource id:', id)
-        notFound()
-        return
-      }
-
-      const data = await fetchResourceByIdWithUserStatus(Number(id), user_id)
-      if (!data) {
-        console.error('Resource not found or inaccessible:', id)
-        notFound()
-      }
-
-      setResources(data)
+    if (loaderResource) {
+      setResources(loaderResource)
+      setIsLoading(false)
     }
-    fetchResource()
-  }, [id, user_id])
+  }, [loaderResource])
 
   useEffect(() => {
     if (!resource?.file_url) {
@@ -262,22 +246,27 @@ function RouteComponent() {
                 </ul>
               </CardContent>
               <CardFooter className="flex justify-end gap-2 p-0 flex-wrap">
-                {user_id !== undefined && resource && resource.has_completed !== null && !resource.has_completed && (
-                  <CompleteResourceButton
-                    userId={user_id}
-                    resourceId={resource.id_resource}
-                    onSuccess={() => window.location.reload()}
-                  />
-                )}
+                {user_id !== undefined &&
+                  resource &&
+                  resource.has_completed !== null &&
+                  !resource.has_completed && (
+                    <CompleteResourceButton
+                      userId={user_id}
+                      resourceId={resource.id_resource}
+                      onSuccess={() => window.location.reload()}
+                    />
+                  )}
 
-                {user_id !== undefined && resource && resource.has_completed === null && (
-                  <TrackResourceDialog
-                    userIdNumber={user_id}
-                    resourceId={resource.id_resource}
-                    onSuccess={() => window.location.reload()}
-                  />
-                )}
-                
+                {user_id !== undefined &&
+                  resource &&
+                  resource.has_completed === null && (
+                    <TrackResourceDialog
+                      userIdNumber={user_id}
+                      resourceId={resource.id_resource}
+                      onSuccess={() => window.location.reload()}
+                    />
+                  )}
+
                 <DeleteResourceDialog
                   makeRedirect={() => {
                     window.location.href = '/app/resources'
@@ -286,7 +275,7 @@ function RouteComponent() {
                 />
                 <UpdateResourceDialog
                   resource={resource}
-                  onClose={() => window.location.href = '/app/resources'}
+                  onClose={() => (window.location.href = '/app/resources')}
                 />
               </CardFooter>
             </>

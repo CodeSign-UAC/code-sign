@@ -223,16 +223,20 @@ export default function ResourcePage(): React.JSX.Element {
           template={template as SandpackPredefinedTemplate}
         >
           <SandpackLayout>
-            <SandpackFileExplorer style={{ height: 600 }} />
+            <SandpackFileExplorer className="!h-auto md:!h-[600px]" />
             <SandpackCodeEditor
               closableTabs
               showTabs
               showLineNumbers
               showRunButton
               initMode="immediate"
+              className="!h-[300px] md:!h-[600px]"
               style={{ height: 600 }}
             />
-            <div className="flex flex-col w-[40%]" style={{ height: 600 }}>
+            <div
+              className="flex flex-col w-full md:w-[40%]"
+              style={{ height: 600 }}
+            >
               <SandpackPreview className="border-solid border-b-1 !h-[60%] grow" />
               <SandpackConsole className="!h-[30%]" />
             </div>

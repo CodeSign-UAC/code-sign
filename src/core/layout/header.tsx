@@ -1,7 +1,13 @@
-import { useLocation } from '@tanstack/react-router'
+import { useLocation, useMatches } from '@tanstack/react-router'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import { Separator } from '@/components/ui/separator'
-import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb'
 
 const routeTitle: Record<string, string> = {
   '/app/home': 'Inicio',
@@ -12,6 +18,19 @@ const routeTitle: Record<string, string> = {
 
 export default function Header(): React.JSX.Element {
   const location = useLocation()
+
+  const matches = useMatches()
+  const match = matches.find((v) => v.pathname == location.pathname)
+
+  const pageEntry = Object.entries(routeTitle).find(([k, _v]) =>
+    location.pathname.startsWith(k),
+  )
+  const page = pageEntry ? pageEntry[1] : ''
+
+  let subPage: string | undefined
+  if (match?.loaderData) {
+    subPage = match.loaderData.resource.title
+  }
 
   return (
     <header className="flex h-16 items-center gap-2 border-b px-4">
@@ -27,11 +46,22 @@ export default function Header(): React.JSX.Element {
           <BreadcrumbSeparator className="hidden lg:block" />
           <BreadcrumbItem>
             <BreadcrumbPage className="text-md font-medium text-blue-600">
-              {routeTitle[location.pathname]}
+              {page}
             </BreadcrumbPage>
           </BreadcrumbItem>
+          {subPage && (
+            <>
+              <BreadcrumbSeparator className="hidden lg:block" />
+              <BreadcrumbItem>
+                <BreadcrumbPage className="text-md font-medium text-blue-600">
+                  {subPage}
+                </BreadcrumbPage>
+              </BreadcrumbItem>
+            </>
+          )}
         </BreadcrumbList>
       </Breadcrumb>
     </header>
   )
 }
+
